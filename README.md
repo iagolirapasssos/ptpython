@@ -12,14 +12,14 @@ ptpython é uma linguagem de programação baseada no Python 3.10, mas com sinta
 
 1. Instale diretamente do GitHub:
     ```bash
-    pip install git+https://github.com/seuusuario/ptpython.git
+    pip install git+https://github.com/iagolirapasssos/ptpython.git
     ```
 
 ### Instalando localmente
 
 1. Clone o repositório:
     ```bash
-    git clone https://github.com/seuusuario/ptpython.git
+    git clone git+https://github.com/iagolirapasssos/ptpython.git
     cd ptpython
     ```
 
