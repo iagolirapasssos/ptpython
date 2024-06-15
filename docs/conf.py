@@ -1,3 +1,7 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
+
 # Configuration file for the Sphinx documentation builder.
 
 # -- Project information -----------------------------------------------------
@@ -15,6 +19,9 @@ extensions = [
 
 templates_path = ['_templates']
 exclude_patterns = []
+
+# Definindo o idioma para Português
+language = 'pt'
 
 # -- Options for HTML output -------------------------------------------------
 html_theme = 'alabaster'

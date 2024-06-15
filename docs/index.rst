@@ -1,17 +1,19 @@
-.. ptpython documentation master file, created by
-   sphinx-quickstart on Tue Oct 19 12:14:29 2021.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. arquivo mestre de documentação do ptpython, criado por
+   sphinx-quickstart em Tue Oct 19 12:14:29 2021.
+   Você pode adaptar este arquivo completamente ao seu gosto, mas ele deve conter pelo menos
+   a diretiva raiz `toctree`.
 
-Welcome to ptpython's documentation!
-====================================
+Bem-vindo à documentação do ptpython!
+=====================================
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Conteúdo:
 
-Indices and tables
-==================
+   modules
+
+Índices e tabelas
+=================
 
 * :ref:`genindex`
 * :ref:`modindex`
