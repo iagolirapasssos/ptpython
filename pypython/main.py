@@ -15,6 +15,7 @@ def main():
     filename = sys.argv[1]
 
     try:
+        # TODO: Adicionar verificação de permissão ao abrir o arquivo.
         with open(filename, 'r', encoding='utf-8') as file:
             code = file.read()
         #logging.debug(f"Código original lido do arquivo:\n{code}")
@@ -25,6 +26,7 @@ def main():
     translated_code = translate(code)
     #logging.debug(f"Código traduzido:\n{translated_code}")
 
+    # TODO: Verificar se a criação de arquivo temporário é a melhor abordagem para execução do código.
     # Cria um arquivo temporário para o código traduzido
     with NamedTemporaryFile(mode='w+', suffix='.py', delete=False) as temp_file:
         temp_file.write(translated_code)

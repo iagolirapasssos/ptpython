@@ -2,10 +2,10 @@ from setuptools import setup, find_packages
 
 setup(
     name="ptpython",
-    version='0.1.176',
+    version='0.1.176',  # TODO: Automatizar o controle de versão.
     packages=find_packages(),
     install_requires=[
-        # Dependências aqui (por exemplo: 'ply==3.11' se precisar de um lexer/parser)
+        # TODO: Listar todas as dependências necessárias aqui.
     ],
     entry_points={
         'console_scripts': [
@@ -17,5 +17,5 @@ setup(
     description="Uma linguagem de programação baseada em Python 3.10 com sintaxe e semântica em português.",
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url="https://github.com/iagolirapasssos/ptpython",
+    url="https://github.com/iagolirapassos/ptpython",
 )
