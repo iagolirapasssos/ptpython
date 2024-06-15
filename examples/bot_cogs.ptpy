@@ -1,0 +1,29 @@
+# bot_cogs.ptpy
+
+importar discord
+importar os
+importar dotenv
+importar discord.ext.comandos como comandos
+
+dotenv.carregar_dotenv()
+
+classe MeuCog(comandos.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @comandos.Cog.listener()
+    async def ao_pronto(self):
+        imprimir(f'Bot conectado como {self.bot.user}!')
+
+    @comandos.comando()
+    async def ping(self, ctx):
+        await ctx.enviar('Pong!')
+
+bot = comandos.Bot(comando_prefixo='!')
+
+@bot.event
+async def ao_pronto():
+    imprimir(f'Bot conectado como {bot.user}!')
+
+bot.carregar_extensão('meu_cog')
+bot.iniciar(os.getenv('DISCORD_TOKEN'))

@@ -1,0 +1,31 @@
+# bot_discord.ptpy
+
+# Importação de módulo
+importar discord
+importar os
+importar dotenv
+
+# Carregar variáveis de ambiente do arquivo .env
+dotenv.carregar_dotenv()
+
+# Definição de uma classe
+classe MeuBot(discord.Client):
+    async def ao_pronto(self):
+        imprimir(f'Bot conectado como {self.user}!')
+
+    async def ao_mensagem(self, mensagem):
+        # Ignorar mensagens do próprio bot
+        se mensagem.author == self.user:
+            retornar
+
+        se mensagem.content == 'Olá':
+            await mensagem.channel.enviar('Olá! Como posso ajudar você?')
+
+# Instanciação de um objeto
+intents = discord.Intents.padrão()
+intents.mensagens = True
+
+bot = MeuBot(intents=intents)
+
+# Iniciar o bot
+bot.iniciar(os.getenv('DISCORD_TOKEN'))

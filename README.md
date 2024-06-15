@@ -1,7 +1,3 @@
-Claro! Vou expandir o README.md com os novos exemplos de gráficos e adicionar instruções sobre como incluir novas palavras-chave para bibliotecas adicionais.
-
----
-
 # ptpython
 
 ptpython é uma linguagem de programação baseada no Python 3.10, mas com sintaxe e semântica em português. Esta linguagem permite que desenvolvedores escrevam código Python utilizando palavras-chave e funções embutidas em português.

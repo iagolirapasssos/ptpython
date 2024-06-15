@@ -1,0 +1,72 @@
+# Importações necessárias
+importar math
+
+# Função para saudação
+função saudação(nome):
+    imprimir(f"Olá, {nome}!")
+
+# Função para somar dois números
+função somar(a, b):
+    retornar a + b
+
+# Classe para representar uma Pessoa
+classe Pessoa:
+    def __init__(self, nome, idade):
+        self.nome = nome
+        self.idade = idade
+    
+    def apresentar(self):
+        imprimir(f"Meu nome é {self.nome} e eu tenho {self.idade} anos.")
+
+# Uso de manipulação de strings
+texto = "programação"
+imprimir(texto.maiusculo())  # Saída: "PROGRAMAÇÃO"
+imprimir(texto.minusculo())  # Saída: "programação"
+imprimir(texto.capitalizar())  # Saída: "Programação"
+
+# Uso de listas
+lista_numeros = [1, 2, 3, 4, 5]
+imprimir(soma(lista_numeros))  # Saída: 15
+imprimir(máximo(lista_numeros))  # Saída: 5
+imprimir(mínimo(lista_numeros))  # Saída: 1
+
+# Uso de dicionários
+dicionário = {"nome": "Alice", "idade": 30}
+imprimir(dicionário.obter("nome"))  # Saída: Alice
+
+# Uso de loops
+para número em intervalo(1, 6):
+    imprimir(f"Número: {número}")
+
+# Uso de condicionais
+idade = 20
+se idade >= 18:
+    imprimir("Você é maior de idade.")
+senão:
+    imprimir("Você é menor de idade.")
+
+# Uso de funções e classes
+saudação("João")
+resultado_soma = somar(10, 5)
+imprimir(f"Resultado da soma: {resultado_soma}")
+
+pessoa = Pessoa("Maria", 25)
+pessoa.apresentar()
+
+# Manipulação de conjuntos
+conjunto_a = {1, 2, 3, 4}
+conjunto_b = {3, 4, 5, 6}
+imprimir(conjunto_a.union(conjunto_b))  # Saída: {1, 2, 3, 4, 5, 6}
+imprimir(conjunto_a.intersection(conjunto_b))  # Saída: {3, 4}
+
+# Uso de funções matemáticas
+numero = 16
+imprimir(math.sqrt(numero))  # Saída: 4.0
+
+# Uso de tratamento de exceções
+tentar:
+    resultado = 10 / 0
+exceto ZeroDivisionError:
+    imprimir("Erro: divisão por zero.")
+finalmente:
+    imprimir("Execução finalizada.")
