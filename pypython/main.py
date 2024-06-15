@@ -33,9 +33,9 @@ def main():
 
     try:
         # Executa o código traduzido usando python3.10
-        result = subprocess.run(['python3.10', temp_filename])
-        logging.info("Código executado com sucesso.")
-    except Exception as e:
+        result = subprocess.run(['python3.10', temp_filename], check=True)
+        #logging.info("Código executado com sucesso.")
+    except subprocess.CalledProcessError as e:
         logging.error(f"Erro na execução: {e}")
     finally:
         # Remove o arquivo temporário

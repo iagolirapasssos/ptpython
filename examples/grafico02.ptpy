@@ -1,0 +1,31 @@
+# Importar a biblioteca matplotlib e nomeá-la como plt
+biblioteca matplotlib.pyplot como plt
+
+# Dados para as curvas
+x = [1, 2, 3, 4, 5]
+y1 = [1, 4, 9, 16, 25]
+y2 = [1, 2, 3, 4, 5]
+y3 = [25, 16, 9, 4, 1]
+
+# Criar a primeira curva
+plt.gráfico(x, y1, marcador='o', cor='r', label='Curva 1: Quadrados')
+
+# Criar a segunda curva
+plt.gráfico(x, y2, marcador='x', cor='g', label='Curva 2: Linha')
+
+# Criar a terceira curva
+plt.gráfico(x, y3, marcador='^', cor='b', label='Curva 3: Quadrados Invertidos')
+
+# Adicionar título e rótulos aos eixos
+plt.xlabel('Eixo X')
+plt.ylabel('Eixo Y')
+plt.suptitle('Gráfico com Múltiplas Curvas')
+
+# Adicionar uma legenda
+plt.legenda()
+
+# Exibir o gráfico
+plt.exibir()
+
+# Salvar o gráfico como imagem
+plt.salvarfigura('exemplo_multiplas_curvas.png')

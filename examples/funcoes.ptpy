@@ -1,0 +1,5 @@
+função soma(a, b):
+    retornar a + b
+
+resultado = soma(5, 3)
+imprimir(f"Resultado: {resultado}")

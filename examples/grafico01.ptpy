@@ -1,0 +1,23 @@
+# Importar a biblioteca matplotlib e nomeá-la como plt
+biblioteca matplotlib.pyplot como plt
+
+# Dados para o gráfico
+x = [1, 2, 3, 4, 5]
+y = [2, 3, 5, 7, 11]
+
+# Criar o gráfico
+plt.gráfico(x, y, marcador='o', cor='b', label='Dados de Exemplo')
+
+# Adicionar título e rótulos aos eixos
+plt.xlabel('Eixo X')
+plt.ylabel('Eixo Y')
+plt.suptitle('Gráfico de Exemplo')
+
+# Adicionar uma legenda
+plt.legenda()
+
+# Exibir o gráfico
+plt.exibir()
+
+# Salvar o gráfico como imagem
+plt.salvarfigura('exemplo_grafico.png')

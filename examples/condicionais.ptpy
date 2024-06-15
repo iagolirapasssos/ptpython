@@ -1,0 +1,7 @@
+idade = inteiro(entrada("Digite sua idade: "))
+se idade >= 10 e idade < 18:
+    imprimir("Você é adolescente.")
+senão se idade > 18:
+    imprimir("Você é adulto.")
+senão:
+    imprimir("Você é criança.")

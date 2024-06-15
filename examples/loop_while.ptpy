@@ -1,0 +1,4 @@
+contador = 0
+enquanto contador < 5:
+    imprimir(f"Contador: {contador}")
+    contador += 1

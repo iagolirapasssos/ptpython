@@ -1,0 +1,23 @@
+# Importar a biblioteca matplotlib e nomeá-la como plt
+biblioteca matplotlib.pyplot como plt
+
+# Dados para o histograma
+importar numpy como np
+dados = np.random.randn(1000)
+
+# Criar o histograma
+plt.hist(dados, bins=30, cor='m', alpha=0.7, label='Frequência')
+
+# Adicionar título e rótulos aos eixos
+plt.xlabel('Valor')
+plt.ylabel('Frequência')
+plt.suptitle('Histograma')
+
+# Adicionar uma legenda
+plt.legenda()
+
+# Exibir o gráfico
+plt.exibir()
+
+# Salvar o gráfico como imagem
+plt.salvarfigura('histograma.png')

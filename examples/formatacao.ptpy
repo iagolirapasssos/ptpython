@@ -1,0 +1,20 @@
+# Formatação de texto
+texto = "python"
+imprimir(texto.maiusculo())
+imprimir(texto.minusculo())
+imprimir(texto.capitalizar())
+imprimir(texto.título())
+
+# Formatação de números
+numero = 123.456
+imprimir(arredondar(numero, 2))
+imprimir(f"{numero:0.2f}")
+imprimir(f"{numero:10.2f}")
+
+# Preenchimento com zeros
+numero_str = "42"
+imprimir(numero_str.preencherzero(5))
+
+# Formatação com a função formato
+pi = 3.14159
+imprimir("O valor de pi é aproximadamente {0:.2f}.".formatar(pi))

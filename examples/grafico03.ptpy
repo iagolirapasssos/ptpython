@@ -1,0 +1,41 @@
+# Importar a biblioteca matplotlib e nomeá-la como plt
+biblioteca matplotlib.pyplot como plt
+
+# Dados para os gráficos
+x = [1, 2, 3, 4, 5]
+y1 = [1, 4, 9, 16, 25]
+y2 = [1, 2, 3, 4, 5]
+y3 = [25, 16, 9, 4, 1]
+y4 = [1, 8, 27, 64, 125]
+
+# Criar a figura e os eixos
+figura, eixos = plt.subplots(2, 2)
+
+# Gráfico 1
+eixos[0, 0].gráfico(x, y1, marcador='o', cor='r', label='Quadrados')
+eixos[0, 0].título('Quadrados')
+eixos[0, 0].legenda()
+
+# Gráfico 2
+eixos[0, 1].gráfico(x, y2, marcador='x', cor='g', label='Linha')
+eixos[0, 1].título('Linha')
+eixos[0, 1].legenda()
+
+# Gráfico 3
+eixos[1, 0].gráfico(x, y3, marcador='^', cor='b', label='Quadrados Invertidos')
+eixos[1, 0].título('Quadrados Invertidos')
+eixos[1, 0].legenda()
+
+# Gráfico 4
+eixos[1, 1].gráfico(x, y4, marcador='s', cor='m', label='Cubos')
+eixos[1, 1].título('Cubos')
+eixos[1, 1].legenda()
+
+# Ajustar o layout
+plt.tight_layout()
+
+# Exibir o gráfico
+plt.exibir()
+
+# Salvar o gráfico como imagem
+plt.salvarfigura('exemplo_multiplos_graficos.png')

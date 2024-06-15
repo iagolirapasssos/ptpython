@@ -1,6 +1,7 @@
 KEYWORDS = {
     "se": "if",
     "senão": "else",
+    "senão se": "elif",
     "para": "for",
     "enquanto": "while",
     "função": "def",
@@ -31,4 +32,8 @@ KEYWORDS = {
     "levantar": "raise",
     "afirmar": "assert",
     "eliminar": "del",
+    "caso": "case",
+    "corresponder": "match",
+    "rendição": "yield",
+    "exceto": "except",
 }

@@ -1,0 +1,23 @@
+# Importar a biblioteca matplotlib e nomeá-la como plt
+biblioteca matplotlib.pyplot como plt
+
+# Dados para o gráfico de barras
+categorias = ['A', 'B', 'C', 'D', 'E']
+valores = [5, 7, 3, 8, 6]
+
+# Criar o gráfico de barras
+plt.bar(categorias, valores, cor='c', label='Valores')
+
+# Adicionar título e rótulos aos eixos
+plt.xlabel('Categorias')
+plt.ylabel('Valores')
+plt.suptitle('Gráfico de Barras')
+
+# Adicionar uma legenda
+plt.legenda()
+
+# Exibir o gráfico
+plt.exibir()
+
+# Salvar o gráfico como imagem
+plt.salvarfigura('grafico_barras.png')

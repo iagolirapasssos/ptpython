@@ -1,0 +1,20 @@
+# Importar a biblioteca matplotlib e nomeá-la como plt
+biblioteca matplotlib.pyplot como plt
+
+# Dados para o gráfico de pizza
+fatias = [15, 30, 45, 10]
+rotulos = ['Primeiro', 'Segundo', 'Terceiro', 'Quarto']
+cores = ['c', 'm', 'r', 'b']
+explosao = (0, 0.1, 0, 0)  # destaca a segunda fatia
+
+# Criar o gráfico de pizza
+plt.pie(fatias, labels=rotulos, colors=cores, explode=explosao, autopct='%1.1f%%', shadow=True, startangle=140)
+
+# Adicionar título
+plt.suptitle('Gráfico de Pizza')
+
+# Exibir o gráfico
+plt.exibir()
+
+# Salvar o gráfico como imagem
+plt.salvarfigura('grafico_pizza.png')

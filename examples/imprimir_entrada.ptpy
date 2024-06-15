@@ -1,0 +1,2 @@
+nome = entrada("Digite seu nome: ")
+imprimir(f"Olá, {nome}!")

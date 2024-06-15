@@ -3,10 +3,26 @@ from pypython.keywords import KEYWORDS
 from pypython.builtins import BUILTINS
 
 def translate(code):
-    # Tradução das palavras-chave
-    for pt, en in KEYWORDS.items():
+    # Expressão regular para identificar strings
+    string_pattern = r'(\'[^\']*\'|"[^"]*")'
+
+    # Encontre todas as strings no código
+    strings = re.findall(string_pattern, code)
+
+    # Substitua temporariamente as strings por marcadores
+    for i, string in enumerate(strings):
+        code = code.replace(string, f'__STRING_{i}__')
+
+    # Substituição das palavras-chave
+    for pt, en in sorted(KEYWORDS.items(), key=lambda item: -len(item[0])):
         code = re.sub(rf'\b{pt}\b', en, code)
-    # Tradução das funções embutidas
+
+    # Substituição das funções embutidas
     for pt, en in BUILTINS.items():
         code = re.sub(rf'\b{pt}\b', en, code)
+
+    # Recoloque as strings originais no código
+    for i, string in enumerate(strings):
+        code = code.replace(f'__STRING_{i}__', string)
+
     return code

@@ -1,0 +1,2 @@
+para i em intervalo(5):
+    imprimir(f"Iteração {i}")
