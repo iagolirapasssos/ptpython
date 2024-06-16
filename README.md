@@ -1,3 +1,6 @@
+Para mencionar um arquivo `tabela_keywords.md` que está no mesmo diretório do `README.md` no GitHub, você pode usar um link relativo. Aqui está como você pode adicionar um link para o arquivo no seu `README.md`:
+
+```markdown
 # ptpython
 
 ptpython é uma linguagem de programação baseada no Python 3.10, mas com sintaxe e semântica em português. Esta linguagem permite que desenvolvedores escrevam código Python utilizando palavras-chave e funções embutidas em português.
@@ -124,6 +127,8 @@ Aqui estão algumas das funções embutidas em português suportadas pelo ptpyth
 | título           | title        |
 | preencherzero    | zfill        |
 | formatar         | format       |
+
+Para a tabela completa de funções e palavras-chave, veja o [tabela_keywords.md](tabela_keywords.md).
 
 ## Exemplos Práticos
 
@@ -310,7 +315,9 @@ biblioteca matplotlib.pyplot como plt
 importar numpy como np
 x = np.random.rand(100)
 y = np.random.rand(100)
-cores = np.random.rand(100)
+cores = np.random.rand(
+
+100)
 tamanho = 100 * np.random.rand(100)
 
 # Criar o gráfico de dispersão
