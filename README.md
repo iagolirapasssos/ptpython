@@ -128,7 +128,7 @@ Aqui estão algumas das funções embutidas em português suportadas pelo ptpyth
 | preencherzero    | zfill        |
 | formatar         | format       |
 
-Para a tabela completa de funções e palavras-chave, veja o [tabela_keywords.md](tabela_keywords.md).
+Para a tabela completa de funções e palavras-chave, veja o [tabela_keywords.md](tabelas_keywords.md).
 
 ## Exemplos Práticos
 
