@@ -73,7 +73,7 @@ Aqui estão as palavras-chave em português suportadas pelo ptpython:
 | eliminar       | del         |
 | caso           | case        |
 | corresponder   | match       |
-| rendição       | yield       |
+| gerar          | yield       |
 
 ## Funções Embutidas Suportadas
 
