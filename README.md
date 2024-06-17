@@ -219,11 +219,10 @@ importar matplotlib.pyplot como plt
 
 # Dados para o gráfico de dispersão
 importar numpy como np
+
 x = np.random.rand(100)
 y = np.random.rand(100)
-cores = np.random.rand(
-
-100)
+cores = np.random.rand(100)
 tamanho = 100 * np.random.rand(100)
 
 # Criar o gráfico de dispersão
