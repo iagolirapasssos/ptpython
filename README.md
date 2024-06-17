@@ -159,7 +159,7 @@ imprimir("O valor de pi é aproximadamente {0:.2f}.".formatar(pi))
 
 ```ptpython
 # Importar a biblioteca matplotlib e nomeá-la como plt
-biblioteca matplotlib.pyplot como plt
+importar matplotlib.pyplot como plt
 
 # Dados para o gráfico de barras
 categorias = ['A', 'B', 'C', 'D', 'E']
@@ -187,7 +187,7 @@ plt.salvarfigura('grafico_barras.png')
 
 ```ptpython
 # Importar a biblioteca matplotlib e nomeá-la como plt
-biblioteca matplotlib.pyplot como plt
+importar matplotlib.pyplot como plt
 
 # Dados para o histograma
 importar numpy como np
@@ -215,7 +215,7 @@ plt.salvarfigura('histograma.png')
 
 ```ptpython
 # Importar a biblioteca matplotlib e nomeá-la como plt
-biblioteca matplotlib.pyplot como plt
+importar matplotlib.pyplot como plt
 
 # Dados para o gráfico de dispersão
 importar numpy como np
@@ -250,7 +250,7 @@ plt.salvarfigura('grafico_dispersao.png')
 
 ```ptpython
 # Importar a biblioteca matplotlib e nomeá-la como plt
-biblioteca matplotlib.pyplot como plt
+importar matplotlib.pyplot como plt
 
 # Dados para o gráfico de pizza
 fatias = [15, 30, 45, 10]
