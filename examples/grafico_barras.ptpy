@@ -1,5 +1,5 @@
 # Importar a biblioteca matplotlib e nomeá-la como plt
-biblioteca matplotlib.pyplot como plt
+importar matplotlib.pyplot como plt
 
 # Dados para o gráfico de barras
 categorias = ['A', 'B', 'C', 'D', 'E']

@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../ptpython'))
 
 # Configuration file for the Sphinx documentation builder.
 
@@ -14,6 +14,7 @@ version = '0.1.176'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
+    'sphinx.ext.autosummary',
     'sphinx.ext.viewcode',
 ]
 

@@ -1,6 +1,3 @@
-Para mencionar um arquivo `tabela_keywords.md` que está no mesmo diretório do `README.md` no GitHub, você pode usar um link relativo. Aqui está como você pode adicionar um link para o arquivo no seu `README.md`:
-
-```markdown
 # ptpython
 
 ptpython é uma linguagem de programação baseada no Python 3.10, mas com sintaxe e semântica em português. Esta linguagem permite que desenvolvedores escrevam código Python utilizando palavras-chave e funções embutidas em português.

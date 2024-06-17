@@ -36,8 +36,8 @@ se __name__ == "__main__":
 
     # Funções embutidas
     lista_numeros = [1, 2, 3, 4, 5]
-    soma_total = soma(*lista_numeros[:2])  # Soma dos dois primeiros elementos
-    imprimir(f"Soma dos dois primeiros números: {soma_total}")
+    total = soma(*lista_numeros[:2])  # Soma dos dois primeiros elementos
+    imprimir(f"Soma dos dois primeiros números: {total}")
 
     # Manipulação de dicionário
     dicionário_exemplo = {"chave1": "valor1", "chave2": "valor2"}

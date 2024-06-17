@@ -1,0 +1,18 @@
+# exemplo.ptpy
+
+# Definição de uma classe
+classe MinhaClasse:
+    def __init__(self, valor):
+        self.valor = valor
+    
+    def mostrar_valor(self):
+        imprimir(f"Valor: {self.valor}")
+
+# Função fora da classe
+função continuar():
+    imprimir("Esta é uma função definida pelo usuário.")
+
+# Uso da classe e função
+obj = MinhaClasse(10)
+obj.mostrar_valor()
+continuar()

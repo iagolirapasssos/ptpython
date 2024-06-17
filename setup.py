@@ -9,7 +9,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'ptpython=pypython.main:main',
+            'ptpython=ptpython.main:main',
         ],
     },
     author="Francisco Iago Lira Passos",

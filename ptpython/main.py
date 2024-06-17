@@ -1,4 +1,4 @@
-# pypython/main.py
+# ptpython/main.py
 
 """
 Módulo principal para executar a tradução e execução do código ptpython.
@@ -8,7 +8,7 @@ import sys
 import logging
 import subprocess
 from tempfile import NamedTemporaryFile
-from pypython.translate import translate
+from ptpython.translate import translate
 
 # Configuração do logger
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
