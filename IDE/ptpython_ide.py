@@ -12,6 +12,7 @@ from ptpython.translate import translate
 import subprocess
 from tempfile import NamedTemporaryFile
 import os
+from ptpython.lexer import CombinedLexer
 
 class PtPythonIDE(tk.Tk):
     def __init__(self):
@@ -346,20 +347,14 @@ class PtPythonIDE(tk.Tk):
 
     def get_current_text_widget(self):
         current_tab = self.notebook.select()
-        print(f'\ncurrent_tab: {current_tab}\n')
         if current_tab:
             tab_frame = self.notebook.nametowidget(current_tab)
-            print(f'\ntab_frame: {tab_frame}\n')
             if tab_frame and isinstance(tab_frame, tk.Frame):
                 children = tab_frame.winfo_children()
-                print(f'\ntab_frame.winfo_children(): {children}\n')
                 for child in children:
-                    print(f'\nchild: {child}\n')
                     if isinstance(child, tk.Frame):
                         sub_children = child.winfo_children()
-                        print(f'\nsub_children: {sub_children}\n')
                         for sub_child in sub_children:
-                            print(f'\nsub_child: {sub_child}\n')
                             if isinstance(sub_child, ScrolledText):
                                 return sub_child
             return None
@@ -391,12 +386,15 @@ class PtPythonIDE(tk.Tk):
             self.highlight_code(tab_text_widget)
             self.update_line_numbers()
 
-    def highlight_code(self, text_widget):
-        code = text_widget.get("1.0", tk.END)
+
+    def highlight_code(self, text_widget, use_ptpython_lexer=True):
+        code = text_widget.get("1.0", "end-1c")
         text_widget.mark_set("range_start", "1.0")
 
-        for token, content in lex(code, PythonLexer()):
-            text_widget.mark_set("range_end", f"range_start + {len(content)}c")
+        lexer = CombinedLexer() if use_ptpython_lexer else PythonLexer()
+
+        for token, content in lex(code, lexer):
+            text_widget.mark_set("range_end", "range_start + %dc" % len(content))
             text_widget.tag_add(str(token), "range_start", "range_end")
             text_widget.mark_set("range_start", "range_end")
 
