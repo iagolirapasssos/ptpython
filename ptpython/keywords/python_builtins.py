@@ -45,7 +45,7 @@ BUILTINS = {
     "maiusculo": "upper",
     "minusculo": "lower",
     "capitalizar": "capitalize",
-    "preencher_com_zero": "zfill",
+    "preencherzero": "zfill",
     "formatar": "format",
     "importar": "import",
     "como": "as",
