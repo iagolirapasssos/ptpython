@@ -1,7 +1,6 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, ttk
 from tkinter.scrolledtext import ScrolledText
-from tkinter import ttk
 from ttkthemes import ThemedStyle
 from contextlib import redirect_stdout, redirect_stderr
 import io
@@ -19,7 +18,7 @@ class PtPythonIDE(tk.Tk):
         super().__init__()
 
         self.title("PtPython IDE")
-        self.geometry("800x600")
+        self.geometry("1000x600")
 
         self.filename = None
 
@@ -37,32 +36,36 @@ class PtPythonIDE(tk.Tk):
         self.column_selection_mode = False
         self.start_index = None
         self.end_index = None
-        self.selected_columns = []  # Track selected columns
+        self.selected_columns = []
 
         self.create_menu()
 
-        self.text_frame = tk.Frame(self, bg='#2b2b2b')
-        self.text_frame.pack(fill="both", expand=1)
+        self.main_frame = tk.Frame(self, bg='#2b2b2b')
+        self.main_frame.pack(fill="both", expand=1)
+
+        self.text_frame = tk.Frame(self.main_frame, bg='#2b2b2b')
+        self.text_frame.pack(side="left", fill="both", expand=1)
 
         self.line_numbers = tk.Text(self.text_frame, width=4, padx=4, takefocus=0, border=0,
                                     background='#333333', foreground='#ffffff', state='disabled', wrap='none', font=("Consolas", self.font_size, "bold"))
         self.line_numbers.pack(side="left", fill="y")
 
-        self.text = ScrolledText(self.text_frame, wrap="none", undo=True, maxundo=-1, font=("Consolas", self.font_size), bg='#1e1e1e', fg='#ffffff', insertbackground='#ffffff')
-        self.text.pack(side="right", fill="both", expand=1)
+        self.notebook = ttk.Notebook(self.text_frame)
+        self.notebook.pack(side="right", fill="both", expand=1)
 
         self.output_text = ScrolledText(self, wrap="none", height=10, bg="black", fg="white", font=("Consolas", self.font_size))
         self.output_text.pack(fill="x", side="bottom")
 
-        self.text.bind("<KeyRelease>", self.on_key_release)
-        self.text.bind("<MouseWheel>", self.on_key_release)
-        self.text.bind("<Button-4>", self.on_key_release)
-        self.text.bind("<Button-5>", self.on_key_release)
-        self.text.bind("<Key>", self.update_column_selection)
+        self.file_frame = tk.Frame(self.main_frame, width=200, bg='#2b2b2b')
+        self.file_frame.pack(side="right", fill="y")
+
+        self.file_tree = ttk.Treeview(self.file_frame, selectmode='browse')
+        self.file_tree.pack(fill="both", expand=1)
+        self.file_tree.bind("<Double-1>", self.open_file_from_tree)
 
         self.bind_shortcuts()
 
-        self.update_line_numbers()
+        self.add_tab("Untitled")
 
     def create_menu(self):
         menubar = tk.Menu(self, bg='#2b2b2b', fg='#ffffff', activebackground='#3e3e3e', activeforeground='#ffffff')
@@ -72,6 +75,8 @@ class PtPythonIDE(tk.Tk):
         filemenu.add_command(label="Abrir", command=self.open_file)
         filemenu.add_command(label="Salvar", command=self.save_file)
         filemenu.add_command(label="Salvar como...", command=self.save_as_file)
+        filemenu.add_separator()
+        filemenu.add_command(label="Abrir Pasta", command=self.open_folder)
         filemenu.add_separator()
         filemenu.add_command(label="Sair", command=self.quit)
         menubar.add_cascade(label="Arquivo", menu=filemenu)
@@ -113,96 +118,118 @@ class PtPythonIDE(tk.Tk):
         self.bind('<Right>', self.move_column_right)
 
     def select_all(self, event=None):
-        self.text.tag_add(tk.SEL, "1.0", tk.END)
-        self.text.mark_set(tk.INSERT, "1.0")
-        self.text.see(tk.INSERT)
+        tab_text_widget = self.get_current_text_widget()
+        if tab_text_widget:
+            tab_text_widget.tag_add(tk.SEL, "1.0", tk.END)
+            tab_text_widget.mark_set(tk.INSERT, "1.0")
+            tab_text_widget.see(tk.INSERT)
         return 'break'
 
     def toggle_column_selection_mode(self, event):
         self.column_selection_mode = not self.column_selection_mode
-        if self.column_selection_mode:
-            self.start_index = self.text.index("@%d,%d" % (event.x, event.y))
-            self.end_index = self.start_index
-            self.text.bind('<B3-Motion>', self.update_column_end_index)
-        else:
-            self.text.tag_remove(tk.SEL, "1.0", tk.END)
-            self.start_index = None
-            self.end_index = None
-            self.selected_columns = []
-            self.text.unbind('<B3-Motion>')
+        tab_text_widget = self.get_current_text_widget()
+        if tab_text_widget:
+            if self.column_selection_mode:
+                self.start_index = tab_text_widget.index("@%d,%d" % (event.x, event.y))
+                self.end_index = self.start_index
+                tab_text_widget.bind('<B3-Motion>', self.update_column_end_index)
+            else:
+                tab_text_widget.tag_remove(tk.SEL, "1.0", tk.END)
+                self.start_index = None
+                self.end_index = None
+                self.selected_columns = []
+                tab_text_widget.unbind('<B3-Motion>')
 
     def update_column_end_index(self, event):
-        self.end_index = self.text.index("@%d,%d" % (event.x, event.y))
-        start_col = int(self.start_index.split('.')[1])
-        end_col = int(self.end_index.split('.')[1])
-        self.selected_columns = list(range(start_col, end_col + 1))
-        self.select_column()
+        tab_text_widget = self.get_current_text_widget()
+        if tab_text_widget:
+            self.end_index = tab_text_widget.index("@%d,%d" % (event.x, event.y))
+            start_col = int(self.start_index.split('.')[1])
+            end_col = int(self.end_index.split('.')[1])
+            self.selected_columns = list(range(start_col, end_col + 1))
+            self.select_column()
 
     def select_column(self, event=None):
-        self.text.tag_remove(tk.SEL, "1.0", tk.END)
-        if not self.start_index or not self.end_index:
-            return
-        start_line = int(self.start_index.split('.')[0])
-        end_line = int(self.end_index.split('.')[0])
+        tab_text_widget = self.get_current_text_widget()
+        if tab_text_widget:
+            tab_text_widget.tag_remove(tk.SEL, "1.0", tk.END)
+            if not self.start_index or not self.end_index:
+                return
+            start_line = int(self.start_index.split('.')[0])
+            end_line = int(self.end_index.split('.')[0])
 
-        for line in range(start_line, end_line + 1):
-            for col in self.selected_columns:
-                start = f"{line}.{col}"
-                end = f"{line}.{col+1}"
-                self.text.tag_add(tk.SEL, start, end)
+            for line in range(start_line, end_line + 1):
+                for col in self.selected_columns:
+                    start = f"{line}.{col}"
+                    end = f"{line}.{col+1}"
+                    tab_text_widget.tag_add(tk.SEL, start, end)
 
-        self.text.see(tk.INSERT)
+            tab_text_widget.see(tk.INSERT)
 
     def update_column_selection(self, event):
-        if self.column_selection_mode and self.text.tag_ranges(tk.SEL):
-            new_text = event.char
-            if new_text:
-                self.text.edit_separator()
-                start_line = int(self.start_index.split('.')[0])
-                end_line = int(self.end_index.split('.')[0])
-                for line in range(start_line, end_line + 1):
-                    for col in self.selected_columns:
-                        start = f"{line}.{col}"
-                        end = f"{line}.{col+1}"
-                        self.text.delete(start, end)
-                        self.text.insert(start, new_text)
+        if self.column_selection_mode:
+            tab_text_widget = self.get_current_text_widget()
+            if tab_text_widget:
+                new_text = event.char
+                if new_text:
+                    tab_text_widget.edit_separator()
+                    start_line = int(self.start_index.split('.')[0])
+                    end_line = int(self.end_index.split('.')[0])
+                    for line in range(start_line, end_line + 1):
+                        for col in self.selected_columns:
+                            start = f"{line}.{col}"
+                            end = f"{line}.{col+1}"
+                            tab_text_widget.delete(start, end)
+                            tab_text_widget.insert(start, new_text)
 
     def move_column_left(self, event=None):
-        if self.column_selection_mode and self.text.tag_ranges(tk.SEL):
-            self.selected_columns = [max(0, col - 1) for col in self.selected_columns]
-            self.select_column()
+        if self.column_selection_mode:
+            tab_text_widget = self.get_current_text_widget()
+            if tab_text_widget:
+                self.selected_columns = [max(0, col - 1) for col in self.selected_columns]
+                self.select_column()
 
     def move_column_right(self, event=None):
-        if self.column_selection_mode and self.text.tag_ranges(tk.SEL):
-            self.selected_columns = [col + 1 for col in self.selected_columns]
-            self.select_column()
+        if self.column_selection_mode:
+            tab_text_widget = self.get_current_text_widget()
+            if tab_text_widget:
+                self.selected_columns = [col + 1 for col in self.selected_columns]
+                self.select_column()
 
     def undo(self, event=None):
-        try:
-            self.text.edit_undo()
-        except tk.TclError:
-            pass
+        tab_text_widget = self.get_current_text_widget()
+        if tab_text_widget:
+            try:
+                tab_text_widget.edit_undo()
+            except tk.TclError:
+                pass
         return 'break'
 
     def redo(self, event=None):
-        try:
-            self.text.edit_redo()
-        except tk.TclError:
-            pass
+        tab_text_widget = self.get_current_text_widget()
+        if tab_text_widget:
+            try:
+                tab_text_widget.edit_redo()
+            except tk.TclError:
+                pass
         return 'break'
 
     def increase_font_size(self, event=None):
         self.font_size += 2
-        self.text.config(font=("Consolas", self.font_size))
+        for tab in self.notebook.tabs():
+            text_widget = self.notebook.nametowidget(tab).winfo_children()[0]
+            text_widget.config(font=("Consolas", self.font_size))
         self.line_numbers.config(font=("Consolas", self.font_size, "bold"))
         self.output_text.config(font=("Consolas", self.font_size))
 
     def decrease_font_size(self, event=None):
         if self.font_size > 8:
             self.font_size -= 2
-            self.text.config(font=("Consolas", self.font_size))
-            self.line_numbers.config(font=("Consolas", self.font_size, "bold"))
-            self.output_text.config(font=("Consolas", self.font_size))
+            for tab in self.notebook.tabs():
+                text_widget = self.notebook.nametowidget(tab).winfo_children()[0]
+                text_widget.config(font=("Consolas", self.font_size))
+            self.line_numbers.config(font(("Consolas", self.font_size, "bold")))
+            self.output_text.config(font(("Consolas", self.font_size)))
 
     def show_shortcuts(self):
         shortcuts = (
@@ -221,7 +248,7 @@ class PtPythonIDE(tk.Tk):
 
     def new_file(self):
         self.filename = None
-        self.text.delete("1.0", tk.END)
+        self.add_tab("Untitled")
 
     def open_file(self):
         options = {
@@ -235,17 +262,42 @@ class PtPythonIDE(tk.Tk):
         if self.filename:
             with open(self.filename, "r", encoding="utf-8") as file:
                 code = file.read()
-            self.text.delete("1.0", tk.END)
-            self.text.insert("1.0", code)
-            self.update_line_numbers()
-            self.highlight_code()
+            self.add_tab(self.filename, code)
+
+    def open_file_from_tree(self, event):
+        item = self.file_tree.selection()[0]
+        file_path = self.file_tree.item(item, "values")[0]
+        if os.path.isfile(file_path):
+            with open(file_path, "r", encoding="utf-8") as file:
+                code = file.read()
+            self.add_tab(file_path, code)
+
+    def open_folder(self):
+        folder_path = filedialog.askdirectory()
+        if folder_path:
+            self.populate_file_tree(folder_path)
+
+    def populate_file_tree(self, folder_path):
+        for item in self.file_tree.get_children():
+            self.file_tree.delete(item)
+        self.insert_folder_items("", folder_path)
+
+    def insert_folder_items(self, parent, folder_path):
+        for item in os.listdir(folder_path):
+            item_path = os.path.join(folder_path, item)
+            node = self.file_tree.insert(parent, "end", text=item, values=[item_path])
+            if os.path.isdir(item_path):
+                self.insert_folder_items(node, item_path)
 
     def save_file(self, event=None):
-        if self.filename:
-            with open(self.filename, "w", encoding="utf-8") as file:
-                file.write(self.text.get("1.0", tk.END))
-        else:
-            self.save_as_file()
+        tab_text_widget = self.get_current_text_widget()
+        if tab_text_widget:
+            content = tab_text_widget.get("1.0", tk.END)
+            if self.filename:
+                with open(self.filename, "w", encoding="utf-8") as file:
+                    file.write(content)
+            else:
+                self.save_as_file()
 
     def save_as_file(self):
         options = {
@@ -255,46 +307,102 @@ class PtPythonIDE(tk.Tk):
             'title': 'Salvar arquivo',
         }
 
-        self.filename = filedialog.asksaveasfilename(**options)
-        if self.filename:
-            with open(self.filename, "w", encoding="utf-8") as file:
-                file.write(self.text.get("1.0", tk.END))
+        filename = filedialog.asksaveasfilename(**options)
+        if filename:
+            tab_text_widget = self.get_current_text_widget()
+            if tab_text_widget:
+                content = tab_text_widget.get("1.0", "end-1c")  # Correção aqui
+                with open(filename, "w", encoding="utf-8") as file:
+                    file.write(content)
+                self.filename = filename
+                self.notebook.tab(self.notebook.select(), text=os.path.basename(self.filename))
 
-    def run_code(self):
-        code = self.text.get("1.0", tk.END)
-        translated_code = translate(code)
 
-        self.output_text.delete("1.0", tk.END)
+    def add_tab(self, title, content=""):
+        tab = tk.Frame(self.notebook)
+        text_widget = ScrolledText(tab, wrap="none", undo=True, maxundo=-1, font=("Consolas", self.font_size), bg='#1e1e1e', fg='#ffffff', insertbackground='#ffffff')
+        text_widget.pack(fill="both", expand=1)
+        text_widget.insert("1.0", content)
+        
+        tab_id = self.notebook.add(tab, text=title)
+        self.notebook.select(tab_id)
+        self.notebook.tab(tab, text=title, compound=tk.RIGHT, padding=(10, 2, 10, 2))
+        
+        close_button = tk.Label(tab, text="x", background='#2b2b2b', foreground='#ffffff', cursor="hand2")
+        close_button.place(relx=1, rely=0, anchor='ne')
+        close_button.bind("<Button-1>", lambda e: self.close_tab(tab_id))
 
-        with NamedTemporaryFile(mode='w+', suffix='.py', delete=False) as temp_file:
-            temp_file.write(translated_code)
-            temp_file.flush()
-            temp_filename = temp_file.name
+        text_widget.bind("<KeyRelease>", self.on_key_release)
+        text_widget.bind("<MouseWheel>", self.on_key_release)
+        text_widget.bind("<Button-4>", self.on_key_release)
+        text_widget.bind("<Button-5>", self.on_key_release)
+        text_widget.bind("<Key>", self.update_column_selection)
+        self.update_line_numbers()
+        self.highlight_code(text_widget)
 
-        try:
-            result = subprocess.run(['python3.10', temp_filename], capture_output=True, text=True, check=True)
-            self.output_text.insert(tk.END, result.stdout)
-        except subprocess.CalledProcessError as e:
-            self.output_text.insert(tk.END, f"Erro na execução: {e}\n{e.stderr}")
-        finally:
-            os.remove(temp_filename)
-
-    def on_key_release(self, event=None):
-        self.highlight_code()
+    def close_tab(self, tab_id):
+        self.notebook.forget(tab_id)
         self.update_line_numbers()
 
-    def highlight_code(self):
-        code = self.text.get("1.0", tk.END)
-        self.text.mark_set("range_start", "1.0")
+    def get_current_text_widget(self):
+        current_tab = self.notebook.select()
+        print(f'\ncurrent_tab: {current_tab}\n')
+        if current_tab:
+            tab_frame = self.notebook.nametowidget(current_tab)
+            print(f'\ntab_frame: {tab_frame}\n')
+            if tab_frame and isinstance(tab_frame, tk.Frame):
+                children = tab_frame.winfo_children()
+                print(f'\ntab_frame.winfo_children(): {children}\n')
+                for child in children:
+                    print(f'\nchild: {child}\n')
+                    if isinstance(child, tk.Frame):
+                        sub_children = child.winfo_children()
+                        print(f'\nsub_children: {sub_children}\n')
+                        for sub_child in sub_children:
+                            print(f'\nsub_child: {sub_child}\n')
+                            if isinstance(sub_child, ScrolledText):
+                                return sub_child
+            return None
+
+    def run_code(self):
+        tab_text_widget = self.get_current_text_widget()
+        if tab_text_widget:
+            code = tab_text_widget.get("1.0", tk.END)
+            translated_code = translate(code)
+
+            self.output_text.delete("1.0", tk.END)
+
+            with NamedTemporaryFile(mode='w+', suffix='.py', delete=False) as temp_file:
+                temp_file.write(translated_code)
+                temp_file.flush()
+                temp_filename = temp_file.name
+
+            try:
+                result = subprocess.run(['python3.10', temp_filename], capture_output=True, text=True, check=True)
+                self.output_text.insert(tk.END, result.stdout)
+            except subprocess.CalledProcessError as e:
+                self.output_text.insert(tk.END, f"Erro na execução: {e}\n{e.stderr}")
+            finally:
+                os.remove(temp_filename)
+
+    def on_key_release(self, event=None):
+        tab_text_widget = self.get_current_text_widget()
+        if tab_text_widget:
+            self.highlight_code(tab_text_widget)
+            self.update_line_numbers()
+
+    def highlight_code(self, text_widget):
+        code = text_widget.get("1.0", tk.END)
+        text_widget.mark_set("range_start", "1.0")
 
         for token, content in lex(code, PythonLexer()):
-            self.text.mark_set("range_end", f"range_start + {len(content)}c")
-            self.text.tag_add(str(token), "range_start", "range_end")
-            self.text.mark_set("range_start", "range_end")
+            text_widget.mark_set("range_end", f"range_start + {len(content)}c")
+            text_widget.tag_add(str(token), "range_start", "range_end")
+            text_widget.mark_set("range_start", "range_end")
 
-        self.apply_highlighting_styles()
+        self.apply_highlighting_styles(text_widget)
 
-    def apply_highlighting_styles(self):
+    def apply_highlighting_styles(self, text_widget):
         try:
             style = get_style_by_name(self.current_theme)
         except ClassNotFound:
@@ -305,17 +413,26 @@ class PtPythonIDE(tk.Tk):
             bg = settings["bgcolor"]
             font = settings["italic"] and "italic" or settings["bold"] and "bold" or None
             if fg:
-                self.text.tag_configure(str(token), foreground=f"#{fg}", font=font)
+                text_widget.tag_configure(str(token), foreground=f"#{fg}", font=font)
             if bg:
-                self.text.tag_configure(str(token), background=f"#{bg}")
+                text_widget.tag_configure(str(token), background=f"#{bg}")
 
     def set_code_theme(self, theme):
         self.current_theme = theme
-        self.apply_highlighting_styles()
+        for tab in self.notebook.tabs():
+            text_widget = self.notebook.nametowidget(tab).winfo_children()[0]
+            if isinstance(text_widget, ScrolledText):
+                self.apply_highlighting_styles(text_widget)
 
     def set_interface_theme(self, theme):
         self.style.set_theme(theme)
-        self.text.config(bg=self.style.lookup('TFrame', 'background'), fg=self.style.lookup('TLabel', 'foreground'))
+        self.text_frame.config(bg=self.style.lookup('TFrame', 'background'))
+        self.line_numbers.config(bg=self.style.lookup('TFrame', 'background'), fg=self.style.lookup('TLabel', 'foreground'))
+        self.output_text.config(bg=self.style.lookup('TFrame', 'background'), fg=self.style.lookup('TLabel', 'foreground'))
+        for tab in self.notebook.tabs():
+            text_widget = self.notebook.nametowidget(tab).winfo_children()[0]
+            if isinstance(text_widget, ScrolledText):
+                text_widget.config(bg=self.style.lookup('TFrame', 'background'), fg=self.style.lookup('TLabel', 'foreground'))
 
     def update_line_numbers(self, event=None):
         if self.show_line_numbers.get():
@@ -326,11 +443,13 @@ class PtPythonIDE(tk.Tk):
 
     def update_line_numbers_content(self, event=None):
         if self.show_line_numbers.get():
-            line_numbers_content = "\n".join(str(i) for i in range(1, int(self.text.index('end').split('.')[0])))
-            self.line_numbers.config(state='normal')
-            self.line_numbers.delete('1.0', 'end')
-            self.line_numbers.insert('1.0', line_numbers_content)
-            self.line_numbers.config(state='disabled')
+            tab_text_widget = self.get_current_text_widget()
+            if tab_text_widget and isinstance(tab_text_widget, ScrolledText):
+                line_numbers_content = "\n".join(str(i) for i in range(1, int(tab_text_widget.index('end-1c').split('.')[0]) + 1))
+                self.line_numbers.config(state='normal')
+                self.line_numbers.delete('1.0', 'end')
+                self.line_numbers.insert('1.0', line_numbers_content)
+                self.line_numbers.config(state='disabled')
 
 if __name__ == "__main__":
     app = PtPythonIDE()
