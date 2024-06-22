@@ -1,3 +1,4 @@
+from ptpython.translate import translate
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 import os
