@@ -17,14 +17,14 @@ def handle_options_requests():
 def index():
     return 'PtPython IDE API'
 
-@app.route('/api2/translate_code', methods=['POST'])
+@app.route('/translate_code', methods=['POST'])
 def translate_code():
     data = request.json
     code = data.get('code', '')
     translated_code = translate(code)
     return jsonify({'translated_code': translated_code})
 
-@app.route('/api2/run_code', methods=['POST'])
+@app.route('/run_code', methods=['POST'])
 def run_code():
     data = request.json
     code = data.get('code', '')
