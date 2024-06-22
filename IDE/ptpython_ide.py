@@ -2,8 +2,6 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 from tkinter.scrolledtext import ScrolledText
 from ttkthemes import ThemedStyle
-from contextlib import redirect_stdout, redirect_stderr
-import io
 from pygments import lex
 from pygments.lexers import PythonLexer
 from pygments.styles import get_style_by_name, get_all_styles
@@ -12,6 +10,9 @@ from ptpython.translate import translate
 import subprocess
 from tempfile import NamedTemporaryFile
 import os
+import sys
+import asyncio
+import threading
 from ptpython.lexer import CombinedLexer
 
 class PtPythonIDE(tk.Tk):
@@ -56,6 +57,7 @@ class PtPythonIDE(tk.Tk):
 
         self.output_text = ScrolledText(self, wrap="none", height=10, bg="black", fg="white", font=("Consolas", self.font_size))
         self.output_text.pack(fill="x", side="bottom")
+        self.output_text.bind("<Return>", self.send_input)
 
         self.file_frame = tk.Frame(self.main_frame, width=200, bg='#2b2b2b')
         self.file_frame.pack(side="right", fill="y")
@@ -67,6 +69,9 @@ class PtPythonIDE(tk.Tk):
         self.bind_shortcuts()
 
         self.add_tab("Untitled")
+
+        self.input_queue = asyncio.Queue()
+        self.awaiting_input = False
 
     def create_menu(self):
         menubar = tk.Menu(self, bg='#2b2b2b', fg='#ffffff', activebackground='#3e3e3e', activeforeground='#ffffff')
@@ -229,8 +234,8 @@ class PtPythonIDE(tk.Tk):
             for tab in self.notebook.tabs():
                 text_widget = self.notebook.nametowidget(tab).winfo_children()[0]
                 text_widget.config(font=("Consolas", self.font_size))
-            self.line_numbers.config(font(("Consolas", self.font_size, "bold")))
-            self.output_text.config(font(("Consolas", self.font_size)))
+            self.line_numbers.config(font=("Consolas", self.font_size, "bold"))
+            self.output_text.config(font=("Consolas", self.font_size))
 
     def show_shortcuts(self):
         shortcuts = (
@@ -312,12 +317,11 @@ class PtPythonIDE(tk.Tk):
         if filename:
             tab_text_widget = self.get_current_text_widget()
             if tab_text_widget:
-                content = tab_text_widget.get("1.0", "end-1c")  # Correção aqui
+                content = tab_text_widget.get("1.0", "end-1c")
                 with open(filename, "w", encoding="utf-8") as file:
                     file.write(content)
                 self.filename = filename
                 self.notebook.tab(self.notebook.select(), text=os.path.basename(self.filename))
-
 
     def add_tab(self, title, content=""):
         tab = tk.Frame(self.notebook)
@@ -372,20 +376,126 @@ class PtPythonIDE(tk.Tk):
                 temp_file.flush()
                 temp_filename = temp_file.name
 
-            try:
-                result = subprocess.run(['python3.10', temp_filename], capture_output=True, text=True, check=True)
-                self.output_text.insert(tk.END, result.stdout)
-            except subprocess.CalledProcessError as e:
-                self.output_text.insert(tk.END, f"Erro na execução: {e}\n{e.stderr}")
-            finally:
-                os.remove(temp_filename)
+            threading.Thread(target=self.execute_code, args=(temp_filename,)).start()
+
+    def execute_code(self, temp_filename):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(self.async_run_code(temp_filename))
+        loop.close()
+
+    async def async_run_code(self, temp_filename):
+        import select
+        import selectors
+        self.input_queue = asyncio.Queue()
+        self.awaiting_input = False
+
+        is_windows = os.name == 'nt'
+
+        if is_windows:
+            import msvcrt
+
+            def read_output(process):
+                while True:
+                    line = process.stdout.readline()
+                    if not line:
+                        break
+                    self.output_text.insert(tk.END, line)
+                    self.output_text.see(tk.END)
+                    sys.stdout.flush()
+                    if not self.awaiting_input:
+                        self.awaiting_input = True
+                        break
+
+            def check_input():
+                while self.awaiting_input:
+                    if msvcrt.kbhit():
+                        nome = input()
+                        self.current_process.stdin.write(nome + '\n')
+                        self.current_process.stdin.flush()
+                        self.awaiting_input = False
+
+            cmd = ['python3.10', '-u', temp_filename]
+            self.current_process = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=1)
+
+            output_thread = threading.Thread(target=read_output, args=(self.current_process,))
+            output_thread.start()
+
+            while self.awaiting_input:
+                check_input()
+
+            output_thread.join()
+
+            for line in iter(self.current_process.stdout.readline, ''):
+                self.output_text.insert(tk.END, line)
+                self.output_text.see(tk.END)
+                sys.stdout.flush()
+
+            self.current_process.wait()
+
+        else:
+            import pty
+
+            def read_write_pty(master_fd, slave_fd):
+                selector = selectors.DefaultSelector()
+                selector.register(master_fd, selectors.EVENT_READ)
+                selector.register(sys.stdin, selectors.EVENT_READ)
+
+                while True:
+                    print(1)
+                    events = selector.select()
+                    if not isinstance(events, list): continue
+                    print(2)
+                    for key, x in events:
+                        print(3, key, x)
+                        if key.fileobj == master_fd:
+                            print(4)
+                            data = os.read(master_fd, 1024)
+                            print(5)
+                            if not data:
+                                return
+                            self.output_text.insert(tk.END, data.decode())
+                            self.output_text.see(tk.END)
+                            sys.stdout.flush()
+                            print(6)
+                        elif key.fileobj == sys.stdin:
+                            print(7)
+                            if not self.awaiting_input:
+                                print(8)
+                                self.awaiting_input = True
+                                nome = input()  # Wait for user input
+                                print(9, nome)
+                                os.write(master_fd, (nome + '\n').encode())
+                                print(10)
+                                self.awaiting_input = False
+
+            master_fd, slave_fd = pty.openpty()
+            self.current_process = subprocess.Popen(['python3.10', '-u', temp_filename], stdin=slave_fd, stdout=slave_fd, stderr=slave_fd, close_fds=True)
+            read_write_pty(master_fd, slave_fd)
+            self.current_process.wait()
+
+        os.remove(temp_filename)
+
+    def send_input(self, event=None):
+        print(dir(self.current_process.stdin), self.current_process.stdin)
+        if self.awaiting_input and self.current_process is not None:
+            input_text = self.output_text.get("insert linestart", "insert lineend") + '\n'
+            print(input_text)
+            self.output_text.insert(tk.END, input_text)
+            self.output_text.mark_set("insert", "end-1c")
+            self.output_text.see(tk.END)
+
+            self.current_process.stdin.write(input_text)
+            self.current_process.stdin.flush()
+            self.awaiting_input = False
+            return "break"
+        return None
 
     def on_key_release(self, event=None):
         tab_text_widget = self.get_current_text_widget()
         if tab_text_widget:
             self.highlight_code(tab_text_widget)
             self.update_line_numbers()
-
 
     def highlight_code(self, text_widget, use_ptpython_lexer=True):
         code = text_widget.get("1.0", "end-1c")
