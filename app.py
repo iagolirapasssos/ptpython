@@ -47,7 +47,10 @@ def execute_code(temp_filename):
         stderr=subprocess.PIPE,
         text=True
     )
-    output, error = process.communicate()
+    
+    # Simule a entrada do usuário aqui
+    user_input = 'simulated input\n'
+    output, error = process.communicate(input=user_input)
     return output + error
 
 if __name__ == '__main__':
