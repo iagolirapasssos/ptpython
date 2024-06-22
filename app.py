@@ -4,7 +4,6 @@ import os
 from tempfile import NamedTemporaryFile
 import subprocess
 import re
-from ptpython.translate import translate
 
 app = Flask(__name__)
 CORS(app, resources={r"/api2/*": {"origins": "*"}})
@@ -32,8 +31,8 @@ def run_code():
     translated_code = translate(code)
 
     input_prompts = extract_input_prompts(translated_code)
-    user_inputs = simulate_user_inputs(input_prompts)
-    
+    user_inputs = data.get('inputs', {})
+
     with NamedTemporaryFile(mode='w+', suffix='.py', delete=False) as temp_file:
         temp_file.write(translated_code)
         temp_file.flush()
@@ -41,17 +40,11 @@ def run_code():
 
     output = execute_code(temp_filename, user_inputs)
     os.remove(temp_filename)
-    return jsonify({'output': output})
+    return jsonify({'output': output, 'prompts': input_prompts})
 
 def extract_input_prompts(code):
     pattern = r'input\("([^"]+)"\)'
     return re.findall(pattern, code)
-
-def simulate_user_inputs(prompts):
-    inputs = {}
-    for prompt in prompts:
-        inputs[prompt] = 'simulated input for ' + prompt
-    return inputs
 
 def execute_code(temp_filename, user_inputs):
     process = subprocess.Popen(
@@ -61,8 +54,8 @@ def execute_code(temp_filename, user_inputs):
         stderr=subprocess.PIPE,
         text=True
     )
-    
-    input_responses = "\n".join(user_inputs[prompt] for prompt in user_inputs) + "\n"
+
+    input_responses = "\n".join(user_inputs.get(prompt, '') for prompt in user_inputs) + "\n"
     output, error = process.communicate(input=input_responses)
     return output + error
 
