@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 import os
 import subprocess
@@ -8,6 +9,7 @@ import asyncio
 import threading
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})  # Permitir CORS para todas as rotas
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 @app.route('/')
