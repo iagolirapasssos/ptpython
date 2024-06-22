@@ -9,8 +9,8 @@ import asyncio
 import threading
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
-socketio = SocketIO(app)
+CORS(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 @app.route('/')
 def index():
