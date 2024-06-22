@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PtPython IDE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css">
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <ul>
+                    <li><a href="#" id="openFile">Abrir</a></li>
+                    <li><a href="#" id="newFile">Novo</a></li>
+                    <li><a href="#" id="saveFile">Salvar</a></li>
+                    <li><a href="#" id="closeFile">Fechar</a></li>
+                    <li><a href="#" id="runCode">Executar</a></li>
+                    <li><a href="#" id="debugCode">Debugar</a></li>
+                </ul>
+            </nav>
+            <div class="logo">
+                <img src="assets/logo.png" alt="PtPython IDE">
+            </div>
+        </header>
+        <main>
+            <div class="editor-container">
+                <textarea id="code-editor"></textarea>
+            </div>
+            <div class="output-container">
+                <pre id="code-output"></pre>
+            </div>
+        </main>
+    </div>
+    <input type="file" id="fileInput" style="display:none">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/closebrackets.min.js"></script>
+    <script src="static/js/script.js"></script>
+</body>
+</html>
