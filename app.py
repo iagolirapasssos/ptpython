@@ -63,7 +63,8 @@ def execute_code(temp_filename, user_inputs):
     input_data = ''.join(inputs)
 
     output, error = process.communicate(input=input_data)
-    return output + error
+    clean_output = "\n".join([line for line in (output + error).split('\n') if not line.startswith('Digite')])
+    return clean_output
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=6000)
