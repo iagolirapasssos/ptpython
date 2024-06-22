@@ -17,14 +17,14 @@ def handle_options_requests():
 def index():
     return 'PtPython IDE API'
 
-@app.route('/translate_code', methods=['POST'])
+@app.route('/api2/translate_code', methods=['POST'])
 def translate_code():
     data = request.json
     code = data.get('code', '')
     translated_code = translate(code)
     return jsonify({'translated_code': translated_code})
 
-@app.route('/run_code', methods=['POST'])
+@app.route('/api2/run_code', methods=['POST'])
 def run_code():
     data = request.json
     code = data.get('code', '')
@@ -64,7 +64,7 @@ def execute_code(temp_filename, user_inputs):
 
     output, error = process.communicate(input=input_data)
     clean_output = "\n".join([line for line in (output + error).split('\n') if not line.startswith('Digite')])
-    return clean_output
+    return clean_output.strip()
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=6000)
