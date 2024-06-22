@@ -16,7 +16,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 def index():
     return 'PtPython IDE API'
 
-@app.route('/translate_code', methods=['POST'])
+@app.route('/api2/translate_code', methods=['POST'])
 def translate_code():
     data = request.json
     code = data.get('code', '')
