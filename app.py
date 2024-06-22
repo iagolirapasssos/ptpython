@@ -9,7 +9,7 @@ import asyncio
 import threading
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api2/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 @app.route('/')
