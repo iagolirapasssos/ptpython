@@ -3,6 +3,7 @@ from flask_cors import CORS
 import os
 from tempfile import NamedTemporaryFile
 import subprocess
+import re
 from ptpython.translate import translate
 
 app = Flask(__name__)
@@ -30,16 +31,29 @@ def run_code():
     code = data.get('code', '')
     translated_code = translate(code)
 
+    input_prompts = extract_input_prompts(translated_code)
+    user_inputs = simulate_user_inputs(input_prompts)
+    
     with NamedTemporaryFile(mode='w+', suffix='.py', delete=False) as temp_file:
         temp_file.write(translated_code)
         temp_file.flush()
         temp_filename = temp_file.name
 
-    output = execute_code(temp_filename)
+    output = execute_code(temp_filename, user_inputs)
     os.remove(temp_filename)
     return jsonify({'output': output})
 
-def execute_code(temp_filename):
+def extract_input_prompts(code):
+    pattern = r'input\("([^"]+)"\)'
+    return re.findall(pattern, code)
+
+def simulate_user_inputs(prompts):
+    inputs = {}
+    for prompt in prompts:
+        inputs[prompt] = 'simulated input for ' + prompt
+    return inputs
+
+def execute_code(temp_filename, user_inputs):
     process = subprocess.Popen(
         ['python3.10', '-u', temp_filename],
         stdin=subprocess.PIPE,
@@ -48,9 +62,8 @@ def execute_code(temp_filename):
         text=True
     )
     
-    # Simule a entrada do usuário aqui
-    user_input = 'simulated input\n'
-    output, error = process.communicate(input=user_input)
+    input_responses = "\n".join(user_inputs[prompt] for prompt in user_inputs) + "\n"
+    output, error = process.communicate(input=input_responses)
     return output + error
 
 if __name__ == '__main__':
