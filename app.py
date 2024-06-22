@@ -1,13 +1,17 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 import os
 from tempfile import NamedTemporaryFile
 import subprocess
 from ptpython.translate import translate
-import asyncio
 
 app = Flask(__name__)
 CORS(app, resources={r"/api2/*": {"origins": "*"}})
+
+@app.before_request
+def handle_options_requests():
+    if request.method == 'OPTIONS':
+        return Response(status=200)
 
 @app.route('/')
 def index():
