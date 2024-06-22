@@ -9,7 +9,7 @@ import asyncio
 import threading
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # Permitir CORS para todas as rotas
+CORS(app)  # Permitir CORS para todas as rotas
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 @app.route('/')
