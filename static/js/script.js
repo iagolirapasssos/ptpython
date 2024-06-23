@@ -6,6 +6,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
         autoCloseBrackets: true
     });
 
+    const translatedEditor = CodeMirror.fromTextArea(document.getElementById('translated-code-editor'), {
+        mode: 'python',
+        theme: 'monokai',
+        lineNumbers: true,
+        readOnly: true
+    });
+
     document.getElementById('openFile').addEventListener('click', () => {
         document.getElementById('fileInput').click();
     });
@@ -35,37 +42,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     document.getElementById('closeFile').addEventListener('click', () => {
         editor.setValue('');
+        translatedEditor.setValue('');
         document.getElementById('code-output').textContent = '';
     });
 
     document.getElementById('runCode').addEventListener('click', () => {
         const code = editor.getValue();
-        fetch('https://bosonshiggs.com.br/api2/run_code', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            const output = data.output || '';
-            const error = data.error || '';
-            document.getElementById('code-output').textContent = output + error;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        runCode(code);
     });
 
     document.getElementById('debugCode').addEventListener('click', () => {
-        // Implementar funcionalidade de debug
         alert('Funcionalidade de debug ainda não implementada.');
     });
 
     editor.on('change', () => {
         const code = editor.getValue();
-        // Função de tradução
         translateCode(code);
     });
 
@@ -77,13 +68,102 @@ document.addEventListener('DOMContentLoaded', (event) => {
             },
             body: JSON.stringify({ code }),
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log(`Translate response status: ${response.status}`);
+            return response.json();
+        })
         .then(data => {
+            console.log('Translated data received:', data);
             const translatedCode = data.translated_code || '';
-            document.getElementById('code-output').textContent = translatedCode;
+            translatedEditor.setValue(translatedCode);
         })
         .catch(error => {
             console.error('Error:', error);
         });
     }
+
+    function runCode(code) {
+        fetch('https://bosonshiggs.com.br/api2/run_code', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code }),
+        })
+        .then(response => {
+            console.log(`Run response status: ${response.status}`);
+            console.log(`Run response: ${response}`);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Run output received:', data);
+            if (data.prompts && data.prompts.length > 0) {
+                handlePrompts(data.prompts, code);
+            } else {
+                displayOutput(data.output);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function handlePrompts(prompts, code) {
+        const inputs = {};
+        let promises = prompts.map(prompt => {
+            return new Promise((resolve) => {
+                let userInput = promptUserInput(prompt);
+                inputs[prompt] = userInput;
+                resolve();
+            });
+        });
+
+        Promise.all(promises).then(() => {
+            runCodeWithInputs(code, inputs);
+        });
+    }
+
+    function runCodeWithInputs(code, inputs) {
+        fetch('https://bosonshiggs.com.br/api2/run_code', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code, inputs }),
+        })
+        .then(response => {
+            console.log(`Run response with inputs status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Run output with inputs received:', data);
+            displayOutput(data.output);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function promptUserInput(prompt) {
+        return window.prompt(prompt);
+    }
+
+    function displayOutput(output) {
+        const terminalOutput = document.getElementById('terminal-output');
+        terminalOutput.textContent += output + '\n';
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    }
+
+    const terminalInput = document.getElementById('terminal-input');
+    const terminalOutput = document.getElementById('terminal-output');
+
+    terminalInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            const userInput = terminalInput.value;
+            terminalInput.value = '';
+            terminalOutput.textContent += `> ${userInput}\n`;
+
+            runCode(userInput);
+        }
+    });
 });
