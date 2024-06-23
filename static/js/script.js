@@ -43,7 +43,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('closeFile').addEventListener('click', () => {
         editor.setValue('');
         translatedEditor.setValue('');
-        document.getElementById('code-output').textContent = '';
     });
 
     document.getElementById('runCode').addEventListener('click', () => {
