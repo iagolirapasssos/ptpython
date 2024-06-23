@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('closeFile').addEventListener('click', () => {
         editor.setValue('');
         translatedEditor.setValue('');
+        document.getElementById('code-output').textContent = '';
     });
 
     document.getElementById('runCode').addEventListener('click', () => {
@@ -54,9 +55,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
         alert('Funcionalidade de debug ainda não implementada.');
     });
 
-    editor.on('change', () => {
+    document.getElementById('translateCode').addEventListener('click', () => {
         const code = editor.getValue();
         translateCode(code);
+    });
+
+    editor.on('change', () => {
+        // Código comentado para evitar tradução automática
+        // const code = editor.getValue();
+        // translateCode(code);
     });
 
     function translateCode(code) {
@@ -68,11 +75,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
             body: JSON.stringify({ code }),
         })
         .then(response => {
-            console.log(`Translate response status: ${response.status}`);
+            if (response.status === 429) {
+                alert('Limite de taxa atingido. Por favor, aguarde antes de tentar novamente.');
+            }
             return response.json();
         })
         .then(data => {
-            console.log('Translated data received:', data);
             const translatedCode = data.translated_code || '';
             translatedEditor.setValue(translatedCode);
         })
@@ -90,7 +98,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
             body: JSON.stringify({ code }),
         })
         .then(response => {
-            console.log(`Run response status: ${response.status}`);
+            if (response.status === 429) {
+                alert('Limite de taxa atingido. Por favor, aguarde antes de tentar novamente.');
+            }
             console.log(`Run response: ${response}`);
             return response.json();
         })
@@ -131,11 +141,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
             body: JSON.stringify({ code, inputs }),
         })
         .then(response => {
-            console.log(`Run response with inputs status: ${response.status}`);
+            if (response.status === 429) {
+                alert('Limite de taxa atingido. Por favor, aguarde antes de tentar novamente.');
+            }
             return response.json();
         })
         .then(data => {
-            console.log('Run output with inputs received:', data);
             displayOutput(data.output);
         })
         .catch(error => {

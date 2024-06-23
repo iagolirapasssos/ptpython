@@ -13,18 +13,21 @@
         <header>
             <nav>
                 <ul>
-                    <li><a href="#">Arquivos</a>
-                        <ul>
+                    <li>
+                        <a href="#">Arquivo</a>
+                        <ul class="submenu">
                             <li><a href="#" id="openFile">Abrir</a></li>
                             <li><a href="#" id="newFile">Novo</a></li>
                             <li><a href="#" id="saveFile">Salvar</a></li>
                             <li><a href="#" id="closeFile">Fechar</a></li>
                         </ul>
                     </li>
-                    <li><a href="#">Executar</a>
-                        <ul>
+                    <li>
+                        <a href="#">Executar</a>
+                        <ul class="submenu">
                             <li><a href="#" id="runCode">Executar</a></li>
                             <li><a href="#" id="debugCode">Debugar</a></li>
+                            <li><a href="#" id="translateCode">Traduzir</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -50,6 +53,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script src="static/js/script.js"></script>
 </body>
 </html>

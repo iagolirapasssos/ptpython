@@ -18,8 +18,6 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 1;
-    position: relative;
 }
 
 header .logo img {
@@ -34,8 +32,8 @@ header nav ul {
 }
 
 header nav ul li {
-    position: relative;
     margin-right: 20px;
+    position: relative;
 }
 
 header nav ul li a {
@@ -45,33 +43,33 @@ header nav ul li a {
     border-radius: 3px;
 }
 
-header nav ul li ul {
+header nav ul li a:hover {
+    background-color: #3e3e3e;
+}
+
+header nav ul li ul.submenu {
     display: none;
     position: absolute;
     top: 100%;
     left: 0;
     background-color: #1e1e1e;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    border-radius: 3px;
     border: 1px solid #3e3e3e;
+    border-radius: 5px;
+    z-index: 1000;
 }
 
-header nav ul li:hover ul {
+header nav ul li:hover ul.submenu {
     display: block;
 }
 
-header nav ul li ul li {
-    margin: 0;
+header nav ul li ul.submenu li {
+    margin-right: 0;
 }
 
-header nav ul li ul li a {
+header nav ul li ul.submenu li a {
+    display: block;
     padding: 10px;
-}
-
-header nav ul li a:hover {
-    background-color: #3e3e3e;
+    white-space: nowrap;
 }
 
 main {
@@ -99,6 +97,11 @@ main {
     font-size: 14px;
     background-color: #1e1e1e;
     color: #ffffff;
+}
+
+.output-container {
+    overflow: hidden;
+    white-space: pre-wrap;
 }
 
 pre {
@@ -136,4 +139,23 @@ pre {
     font-size: 14px;
     width: 100%;
     box-sizing: border-box;
+}
+
+.viewport-container {
+    flex: 1;
+    padding: 10px;
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #1e1e1e;
+    border: 1px solid #3e3e3e;
+    border-radius: 5px;
+    margin: 10px;
+    overflow: hidden;
+}
+
+#graph-viewport {
+    flex: 1;
+    background-color: #ffffff;
 }
