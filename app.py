@@ -73,7 +73,7 @@ def execute_code(temp_filename):
             stderr=subprocess.PIPE,
             text=True
         )
-        output, error = process.communicate()
+        output, error = process.communicate(input='\n'.join(user_inputs) + '\n')
         output = output.split('\n', maxsplit=len(prompts))[-1]
         output += error
     finally:
@@ -82,7 +82,7 @@ def execute_code(temp_filename):
     print(f'output: {output}')
     return output, prompts
 
-@app.route('/api2/submit_input', methods=['POST'])
+@app.route('/submit_input', methods=['POST'])
 def submit_input():
     global input_index
     data = request.json
