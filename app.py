@@ -66,6 +66,7 @@ def execute_code(temp_filename, user_inputs):
     print(f'input_data: {input_data}')
 
     output, error = process.communicate(input=input_data)
+    print(f"output: {output}, error: {error}")
     return (output + error).strip()
 
 if __name__ == '__main__':
