@@ -1,10 +1,9 @@
-from flask import Flask, request, jsonify, Response, send_file
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 import os
 from tempfile import NamedTemporaryFile
 import subprocess
 from ptpython.translate import translate
-import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 CORS(app, resources={r"/api2/*": {"origins": "*"}})
@@ -41,13 +40,7 @@ def run_code():
 
     output = execute_code(temp_filename, user_inputs)
     os.remove(temp_filename)
-
-    response = {'output': output, 'prompts': input_prompts}
-    image_path = '/path/to/generated/image.png'
-    if os.path.exists(image_path):
-        response['image'] = image_path
-
-    return jsonify(response)
+    return jsonify({'output': output, 'prompts': input_prompts})
 
 def extract_input_prompts(code):
     import re
@@ -75,14 +68,6 @@ def execute_code(temp_filename, user_inputs):
     output, error = process.communicate(input=input_data)
     print(f"output: {output}, error: {error}")
     return (output + error).strip()
-
-@app.route('/generated_image')
-def get_generated_image():
-    image_path = '/path/to/generated/image.png'
-    if os.path.exists(image_path):
-        return send_file(image_path, mimetype='image/png')
-    else:
-        return 'Image not found', 404
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=6000)
