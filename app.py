@@ -1,9 +1,10 @@
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, send_file
 from flask_cors import CORS
 import os
 from tempfile import NamedTemporaryFile
 import subprocess
 from ptpython.translate import translate
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 CORS(app, resources={r"/api2/*": {"origins": "*"}})
@@ -38,9 +39,13 @@ def run_code():
         temp_file.flush()
         temp_filename = temp_file.name
 
-    output = execute_code(temp_filename, user_inputs)
+    output, error = execute_code(temp_filename, user_inputs)
     os.remove(temp_filename)
-    return jsonify({'output': output, 'prompts': input_prompts})
+
+    if 'exemplo_grafico.png' in os.listdir():
+        return send_file('exemplo_grafico.png', mimetype='image/png')
+
+    return jsonify({'output': output + error, 'prompts': input_prompts})
 
 def extract_input_prompts(code):
     import re
@@ -57,17 +62,13 @@ def execute_code(temp_filename, user_inputs):
     )
 
     def get_input(prompt):
-        print(f"prompt: {prompt}")
         return user_inputs.get(prompt, '') + '\n'
 
     inputs = [get_input(prompt) for prompt in extract_input_prompts(open(temp_filename).read())]
-    print(f"inputs: {inputs}")
     input_data = ''.join(inputs)
-    print(f'input_data: {input_data}')
 
     output, error = process.communicate(input=input_data)
-    print(f"output: {output}, error: {error}")
-    return (output + error).strip()
+    return output.strip(), error.strip()
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=6000)
