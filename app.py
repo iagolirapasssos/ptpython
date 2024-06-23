@@ -39,13 +39,15 @@ def run_code():
         temp_file.flush()
         temp_filename = temp_file.name
 
-    output, error = execute_code(temp_filename, user_inputs)
+    output = execute_code(temp_filename, user_inputs)
     os.remove(temp_filename)
 
-    if 'exemplo_grafico.png' in os.listdir():
-        return send_file('exemplo_grafico.png', mimetype='image/png')
+    response = {'output': output, 'prompts': input_prompts}
+    image_path = '/path/to/generated/image.png'
+    if os.path.exists(image_path):
+        response['image'] = image_path
 
-    return jsonify({'output': output + error, 'prompts': input_prompts})
+    return jsonify(response)
 
 def extract_input_prompts(code):
     import re
@@ -62,13 +64,25 @@ def execute_code(temp_filename, user_inputs):
     )
 
     def get_input(prompt):
+        print(f"prompt: {prompt}")
         return user_inputs.get(prompt, '') + '\n'
 
     inputs = [get_input(prompt) for prompt in extract_input_prompts(open(temp_filename).read())]
+    print(f"inputs: {inputs}")
     input_data = ''.join(inputs)
+    print(f'input_data: {input_data}')
 
     output, error = process.communicate(input=input_data)
-    return output.strip(), error.strip()
+    print(f"output: {output}, error: {error}")
+    return (output + error).strip()
+
+@app.route('/generated_image')
+def get_generated_image():
+    image_path = '/path/to/generated/image.png'
+    if os.path.exists(image_path):
+        return send_file(image_path, mimetype='image/png')
+    else:
+        return 'Image not found', 404
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=6000)
