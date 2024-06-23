@@ -8,8 +8,8 @@ from ptpython.translate import translate
 app = Flask(__name__)
 CORS(app, resources={r"/api2/*": {"origins": "*"}})
 
-user_inputs = []  # Lista para armazenar as entradas do usuário
-input_index = 0  # Índice para controlar qual entrada solicitar
+user_inputs = []
+input_index = 0
 
 @app.before_request
 def handle_options_requests():
@@ -42,7 +42,6 @@ def run_code():
     output, prompts = execute_code(temp_filename)
     os.remove(temp_filename)
 
-    # Se houver prompts, envie-os para o cliente
     if prompts:
         input_index = 0
         user_inputs = []
@@ -63,22 +62,21 @@ def execute_code(temp_filename):
             return user_input
         raise EOFError("No input available")
 
-    # Redefinir a função input para coletar prompts
     original_input = __builtins__.input
     __builtins__.input = mock_input
 
-    process = subprocess.Popen(
-        ['python3.10', '-u', temp_filename],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True
-    )
-    output, error = process.communicate()
-    output += error
-
-    # Restaurar a função input original
-    __builtins__.input = original_input
+    try:
+        process = subprocess.Popen(
+            ['python3.10', '-u', temp_filename],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        output, error = process.communicate()
+        output += error
+    finally:
+        __builtins__.input = original_input
 
     return output, prompts
 
