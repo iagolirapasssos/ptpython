@@ -291,6 +291,61 @@ BUILTINS = {
 pip install .
 ```
 
+O erro `Connection refused` indica que o Redis não está em execução ou está inacessível na porta configurada. Certifique-se de que o Redis esteja instalado e em execução. Você pode instalar e iniciar o Redis com os seguintes comandos:
+
+### Instalar o Redis
+Se o Redis não estiver instalado, instale-o usando os comandos apropriados para o seu sistema operacional. Aqui estão os comandos para sistemas baseados em Debian/Ubuntu e CentOS:
+
+**Debian/Ubuntu:**
+```sh
+sudo apt update
+sudo apt install redis-server
+```
+
+**CentOS:**
+```sh
+sudo yum install epel-release
+sudo yum install redis
+```
+
+### Configurar e Iniciar o Redis
+Após a instalação, você pode iniciar o Redis com o seguinte comando:
+
+```sh
+sudo systemctl start redis-server
+```
+
+Verifique se o Redis está em execução:
+
+```sh
+sudo systemctl status redis-server
+```
+
+### Configurar o Redis para iniciar automaticamente
+Para configurar o Redis para iniciar automaticamente na inicialização do sistema, use:
+
+```sh
+sudo systemctl enable redis-server
+```
+
+### Verifique a Conexão do Redis no Código
+Verifique se a configuração do Redis no código está correta e corresponde ao host e porta onde o Redis está em execução.
+
+### Reinicie o Gunicorn
+Depois de garantir que o Redis está em execução, reinicie o Gunicorn:
+
+```sh
+sudo systemctl restart gunicorn
+```
+
+Ou se estiver executando manualmente:
+
+```sh
+gunicorn -w 4 -b 0.0.0.0:6000 app:app
+```
+
+Isso deve resolver o problema de conexão com o Redis e permitir que o limite de taxa funcione corretamente.
+
 ## Créditos
 
 ptpython foi desenvolvido por Prof. Francisco Iago Lira Passos (iagolirapassos@gmail.com). Agradecemos por utilizar esta ferramenta e esperamos que ela facilite seu aprendizado e uso do Python em português.
