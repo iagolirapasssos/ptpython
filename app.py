@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import os
 from tempfile import NamedTemporaryFile
 import subprocess
@@ -8,16 +10,24 @@ from ptpython.translate import translate
 app = Flask(__name__)
 CORS(app, resources={r"/api2/*": {"origins": "*"}})
 
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"]
+)
+
 @app.before_request
 def handle_options_requests():
     if request.method == 'OPTIONS':
         return Response(status=200)
 
 @app.route('/')
+@limiter.exempt
 def index():
     return 'PtPython IDE API'
 
 @app.route('/translate_code', methods=['POST'])
+@limiter.limit("10 per minute")
 def translate_code():
     data = request.json
     code = data.get('code', '')
@@ -25,6 +35,7 @@ def translate_code():
     return jsonify({'translated_code': translated_code})
 
 @app.route('/run_code', methods=['POST'])
+@limiter.limit("10 per minute")
 def run_code():
     data = request.json
     code = data.get('code', '')
@@ -57,16 +68,12 @@ def execute_code(temp_filename, user_inputs):
     )
 
     def get_input(prompt):
-        print(f"prompt: {prompt}")
         return user_inputs.get(prompt, '') + '\n'
 
     inputs = [get_input(prompt) for prompt in extract_input_prompts(open(temp_filename).read())]
-    print(f"inputs: {inputs}")
     input_data = ''.join(inputs)
-    print(f'input_data: {input_data}')
 
     output, error = process.communicate(input=input_data)
-    print(f"output: {output}, error: {error}")
     return (output + error).strip()
 
 if __name__ == '__main__':
