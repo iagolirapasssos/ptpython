@@ -3,3 +3,5 @@ flask-socketio
 eventlet
 flask_cors
 flask-limiter
+gunicorn
+redis

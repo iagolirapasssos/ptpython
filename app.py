@@ -6,14 +6,17 @@ import os
 from tempfile import NamedTemporaryFile
 import subprocess
 from ptpython.translate import translate
+import redis
 
 app = Flask(__name__)
 CORS(app, resources={r"/api2/*": {"origins": "*"}})
 
+# Configuração do Redis para Flask-Limiter
+redis_client = redis.Redis(host='localhost', port=6379, db=0)
 limiter = Limiter(
     get_remote_address,
     app=app,
-    default_limits=["200 per day", "50 per hour"]
+    storage_uri="redis://localhost:6379"
 )
 
 @app.before_request
@@ -22,12 +25,11 @@ def handle_options_requests():
         return Response(status=200)
 
 @app.route('/')
-@limiter.exempt
 def index():
     return 'PtPython IDE API'
 
 @app.route('/translate_code', methods=['POST'])
-@limiter.limit("10 per minute")
+@limiter.limit("5 per minute")  # Exemplo de limite de taxa
 def translate_code():
     data = request.json
     code = data.get('code', '')
@@ -35,7 +37,7 @@ def translate_code():
     return jsonify({'translated_code': translated_code})
 
 @app.route('/run_code', methods=['POST'])
-@limiter.limit("10 per minute")
+@limiter.limit("5 per minute")  # Exemplo de limite de taxa
 def run_code():
     data = request.json
     code = data.get('code', '')
