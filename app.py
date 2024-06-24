@@ -106,11 +106,15 @@ def execute_code(temp_filename, user_inputs):
         text=True
     )
 
+    out = ''
     def get_input(prompt):
-        return user_inputs.get(prompt, '') + '\n'
+        in_ = user_inputs.get(prompt, '') + '\n'
+        out += in_
+        return in_
 
     print('\n\n\n')
     for prompt in extract_input_prompts(open(temp_filename).read()):
+        out += prompt
         print(f'prompt: {prompt} :::: get_input(prompt): {get_input(prompt)}')
     inputs = [get_input(prompt) for prompt in extract_input_prompts(open(temp_filename).read())]
     print(f'inputs: {inputs}')
@@ -118,9 +122,11 @@ def execute_code(temp_filename, user_inputs):
     print(f'input_data: {input_data}')
     print('\n\n\n')
 
+    #{'output': 'iago\n43\nDigite seu nome: Digite sua idade: iago 43', 'prompts': ['Digite seu nome: ', 'Digite sua idade: ']}
+    
     output, error = process.communicate(input=input_data)
     print(f"output: {output}, error: {error}, {output + error}")
-    return (output + error).strip()
+    return (out + error).strip()
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=6000)
