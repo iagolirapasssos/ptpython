@@ -109,10 +109,14 @@ def execute_code(temp_filename, user_inputs):
     def get_input(prompt):
         return user_inputs.get(prompt, '') + '\n'
 
+    print('\n\n\n')
     for prompt in extract_input_prompts(open(temp_filename).read()):
         print(f'prompt: {prompt} :::: get_input(prompt): {get_input(prompt)}')
     inputs = [get_input(prompt) for prompt in extract_input_prompts(open(temp_filename).read())]
+    print(f'inputs: {inputs}')
     input_data = ''.join(inputs)
+    print(f'input_data: {input_data}')
+    print('\n\n\n')
 
     output, error = process.communicate(input=input_data)
     print(f"output: {output}, error: {error}, {output + error}")
