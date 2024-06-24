@@ -62,7 +62,9 @@ def run_code():
     print(f'output: {output} e type: {type(output)}')
     if len(user_inputs) > 0:
         out = inputs_only(user_inputs)
+        print(out, type(out))
         l = output.split('\n')
+        print(l)
         out += l[len(l)-1]
     else:
         out = output
