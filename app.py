@@ -111,6 +111,7 @@ def execute_code(temp_filename, user_inputs):
     input_data = ''.join(inputs)
 
     output, error = process.communicate(input=input_data)
+    print(f"output: {output}, error: {error}, {output + error}")
     return (output + error).strip()
 
 if __name__ == '__main__':
