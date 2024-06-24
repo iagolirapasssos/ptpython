@@ -61,11 +61,17 @@ def run_code():
 
     print(f'output: {output} e type: {type(output)}')
     if len(user_inputs) > 0:
-        out = inputs_only(user_inputs)
+        out, cont = inputs_only(user_inputs)
         print(out, type(out))
-        l = output.split('\n')
-        print(l)
-        out += l[len(l)-1]
+        out_split = output.split('\n')
+
+        if len(out_split) > cont:
+            for num, n in enumerate(out_split):
+                if (num+1) > cont:
+                    out += n
+        else:
+            print(l)
+            out += out_split[len(out_split)-1]
     else:
         out = output
     print(f'out: {out}')
@@ -74,9 +80,11 @@ def run_code():
 
 def inputs_only(user_inputs):
     out = ''
+    cont = 0
     for a in user_inputs.values():
         out+=a+'\n'
-    return out
+        cont+=1
+    return out, cont
 
 def extract_input_prompts(code):
     import re
