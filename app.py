@@ -60,7 +60,7 @@ def run_code():
     os.remove(temp_filename)
 
     print(f'output: {output} e type: {type(output)}')
-    if len(user_inputs) > 0
+    if len(user_inputs) > 0:
         out = inputs_only(user_inputs)
         l = output.split('\n')
         out += l[len(l)-1]
