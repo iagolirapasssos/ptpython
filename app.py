@@ -75,7 +75,8 @@ def run_code():
 def inputs_only(user_inputs):
     out = ''
     for a in user_inputs.values():
-        a+'\n'
+        out+=a+'\n'
+    return out
 
 def extract_input_prompts(code):
     import re
