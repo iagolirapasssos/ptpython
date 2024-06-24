@@ -58,20 +58,11 @@ def run_code():
     output, error = execute_code(temp_filename, user_inputs)
     os.remove(temp_filename)
 
-    if len(user_inputs) > 0:
-        out, cont = inputs_only(user_inputs)
-        out_split = output.split('\n')
-        if len(out_split) > cont:
-            for num, n in enumerate(out_split):
-                if (num+1) > cont:
-                    out += n + '\n'
-        else:
-            out += out_split[len(out_split)-1]
-    else:
-        out = output
+    # Concatena as respostas do usuário e as mensagens de erro, se houver
+    result_output = output.strip() + '\n' + error.strip()
     
-    print({'output': out, 'prompts': input_prompts})
-    return jsonify({'output': out, 'prompts': input_prompts})
+    print({'output': result_output, 'prompts': input_prompts})
+    return jsonify({'output': result_output, 'prompts': input_prompts})
 
 def inputs_only(user_inputs):
     out = ''
