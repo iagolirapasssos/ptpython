@@ -60,7 +60,6 @@ def run_code():
 
     result_output = output.strip() + '\n' + error.strip()
     
-    print({'output': result_output, 'prompts': input_prompts})
     return jsonify({'output': result_output, 'prompts': input_prompts})
 
 def inputs_only(user_inputs):
@@ -101,7 +100,6 @@ def execute_code(temp_filename, user_inputs):
     # Remove os prompts de entrada da saída
     filtered_output = filter_output(output, input_prompts)
 
-    print(f"\n\noutput: {filtered_output}, error: {error}, {filtered_output + error}\n\n")
     return filtered_output, error
 
 def filter_output(output, prompts):
