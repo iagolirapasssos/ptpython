@@ -42,6 +42,8 @@ def run_code():
     data = request.json
     code = data.get('code', '')
     user_inputs = data.get('inputs', {})
+    out_sem_newline = {key.strip(): value.strip() for key, value in user_inputs.items()} if len(user_inputs} > 0 else out_sem_newline
+    user_inputs = out_sem_newline
     print(f'user_inputs: {user_inputs}')
 
     translated_code = translate(code)
