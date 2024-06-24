@@ -61,7 +61,7 @@ def run_code():
 
     out = inputs_only(user_inputs) if len(user_inputs) > 0 else output
     print(f'out: {out}')
-    print({'output': output, 'prompts': input_prompts})
+    print({'output': out, 'prompts': input_prompts})
     return jsonify({'output': out, 'prompts': input_prompts})
 
 def inputs_only(user_inputs):
