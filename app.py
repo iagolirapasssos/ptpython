@@ -59,7 +59,7 @@ def run_code():
     output = execute_code(temp_filename, user_inputs)
     os.remove(temp_filename)
 
-    print(f\n'output: {output} e type: {type(output)}\n')
+    print(f'\noutput: {output} e type: {type(output)}\n')
     if len(user_inputs) > 0:
         out, cont = inputs_only(user_inputs)
         print(out, type(out))
