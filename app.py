@@ -8,6 +8,9 @@ from tempfile import NamedTemporaryFile
 import subprocess
 from ptpython.translate import translate
 import redis
+import base64
+import matplotlib.pyplot as plt
+import io
 
 app = Flask(__name__)
 CORS(app, resources={r"/api2/*": {"origins": "*"}})
@@ -133,6 +136,12 @@ def handle_execute_code(data):
     os.remove(temp_filename)
 
     result_output = output.strip() + '\n' + error.strip()
+
+    # Se o código gerar um gráfico, enviar o gráfico para o frontend
+    if 'plt.show()' in translated_code:
+        with open('exemplo_grafico.png', 'rb') as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+        emit('graph_output', {'image_data': encoded_string})
     
     emit('code_output', {'output': result_output, 'prompts': input_prompts})
 
