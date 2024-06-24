@@ -73,7 +73,7 @@ def inputs_only(user_inputs):
 
 def extract_input_prompts(code):
     import re
-    pattern = r'entrada\("([^"]+)"\)'
+    pattern = r'input\("([^"]+)"\)'
     return re.findall(pattern, code)
 
 def contains_dangerous_commands(code):
