@@ -42,6 +42,8 @@ def run_code():
     data = request.json
     code = data.get('code', '')
     user_inputs = data.get('inputs', {})
+    out_sem_newline = {key.strip(): value.strip() for key, value in user_inputs.items()} #remover o \n dos valores
+    user_inputs = out_sem_newline
     print(f'user_inputs: {user_inputs}')
 
     translated_code = translate(code)
