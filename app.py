@@ -71,7 +71,7 @@ def inputs_only(user_inputs):
              out+=a+'\n'
      else:
              out+=a
-    return
+    return out
 
 def extract_input_prompts(code):
     import re
