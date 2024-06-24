@@ -66,7 +66,7 @@ def run_code():
 def inputs_only(user_inputs):
     out = ''
     for n, a in enumerate(user_inputs.values()):
-     if n+1 < len(l):
+     if n+1 < len(user_inputs):
              out+=a+'\n'
      else:
              out+=a
