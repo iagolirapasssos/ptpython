@@ -42,7 +42,6 @@ def run_code():
     data = request.json
     code = data.get('code', '')
     user_inputs = data.get('inputs', {})
-    print(user_inputs)
 
     translated_code = translate(code)
     
@@ -59,17 +58,13 @@ def run_code():
     output = execute_code(temp_filename, user_inputs)
     os.remove(temp_filename)
 
-    print(f'output: {output} e type: {type(output)}')
     if len(user_inputs) > 0:
         out = inputs_only(user_inputs)
-        print(out, type(out))
-        l = output.split('\n')
-        print(l)
-        out += l[len(l)-1]
+        output_splited = output.split('\n')
+        out += output_splited[len(output_splited)-1]
     else:
         out = output
-    print(f'out: {out}')
-    print({'output': out, 'prompts': input_prompts})
+
     return jsonify({'output': out, 'prompts': input_prompts})
 
 def inputs_only(user_inputs):
@@ -88,7 +83,6 @@ def contains_dangerous_commands(code):
     return any(cmd in code for cmd in dangerous_commands)
 
 def execute_code(temp_filename, user_inputs):
-    print(f'temp_filename:\n{os.system(f"cat {temp_filename}")}\n')
     process = subprocess.Popen(
         ['python3.10', '-u', temp_filename],
         stdin=subprocess.PIPE,
@@ -101,9 +95,7 @@ def execute_code(temp_filename, user_inputs):
         return user_inputs.get(prompt, '') + '\n'
 
     inputs = [get_input(prompt) for prompt in extract_input_prompts(open(temp_filename).read())]
-    print(f'inputs: {inputs}')
     input_data = ''.join(inputs)
-    print(f'input_data: {input_data}')
 
     output, error = process.communicate(input=input_data)
     return (output + error).strip()
