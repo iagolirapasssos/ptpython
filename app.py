@@ -42,6 +42,7 @@ def run_code():
     data = request.json
     code = data.get('code', '')
     user_inputs = data.get('inputs', {})
+    print(user_inputs)
 
     translated_code = translate(code)
     
