@@ -57,6 +57,7 @@ def run_code():
 
     output = execute_code(temp_filename, user_inputs)
     os.remove(temp_filename)
+    print(jsonify({'output': output, 'prompts': input_prompts}))
     return jsonify({'output': output, 'prompts': input_prompts})
 
 def extract_input_prompts(code):
