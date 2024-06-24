@@ -83,7 +83,7 @@ def contains_dangerous_commands(code):
     return any(cmd in code for cmd in dangerous_commands)
 
 def execute_code(temp_filename, user_inputs):
-    print(f'temp_filename:\n{temp_filename}\n')
+    print(f'temp_filename:\n{os.system(f'cat {temp_filename}')}\n')
     process = subprocess.Popen(
         ['python3.10', '-u', temp_filename],
         stdin=subprocess.PIPE,
