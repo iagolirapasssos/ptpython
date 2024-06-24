@@ -10,10 +10,10 @@ dotenv.carregar_dotenv()
 
 # Definição de uma classe
 classe MeuBot(discord.Client):
-    async def ao_pronto(self):
+    async função ao_pronto(self):
         imprimir(f'Bot conectado como {self.user}!')
 
-    async def ao_mensagem(self, mensagem):
+    async função ao_mensagem(self, mensagem):
         # Ignorar mensagens do próprio bot
         se mensagem.author == self.user:
             retornar

@@ -4,16 +4,16 @@ importar discord
 importar discord.ext.comandos como comandos
 
 classe MeuCog(comandos.Cog):
-    def __init__(self, bot):
+    função __init__(self, bot):
         self.bot = bot
 
     @comandos.Cog.listener()
-    async def ao_pronto(self):
+    async função ao_pronto(self):
         imprimir(f'Bot conectado como {self.bot.user}!')
 
     @comandos.comando()
-    async def ping(self, ctx):
+    async função ping(self, ctx):
         await ctx.enviar('Pong!')
 
-def configurar(bot):
+função configurar(bot):
     bot.adicionar_cog(MeuCog(bot))

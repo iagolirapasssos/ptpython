@@ -29,7 +29,7 @@ ffmpeg_options = {
 ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
 classe YTDLSource(discord.PCMVolumeTransformer):
-    def __init__(self, source, *, data, volume=0.5):
+    função __init__(self, source, *, data, volume=0.5):
         super().__init__(source, volume)
 
         self.data = data
@@ -38,7 +38,7 @@ classe YTDLSource(discord.PCMVolumeTransformer):
         self.url = data.get('url')
 
     @classmethod
-    async def from_url(cls, url, *, loop=None, stream=False):
+    async função from_url(cls, url, *, loop=None, stream=False):
         loop = loop or asyncio.get_event_loop()
         data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
 
@@ -50,21 +50,21 @@ classe YTDLSource(discord.PCMVolumeTransformer):
         retornar cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
 classe Music(comandos.Cog):
-    def __init__(self, bot):
+    função __init__(self, bot):
         self.bot = bot
 
     @comandos.comando()
-    async def entrar(self, ctx):
+    async função entrar(self, ctx):
         if not ctx.voice_client:
             await ctx.author.voice.channel.entrar()
 
     @comandos.comando()
-    async def sair(self, ctx):
+    async função sair(self, ctx):
         if ctx.voice_client:
             await ctx.voice_client.sair()
 
     @comandos.comando()
-    async def jogar(self, ctx, *, url):
+    async função jogar(self, ctx, *, url):
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop)
             ctx.voice_client.play(player, after=lambda x: imprimir(f'Erro no player: {x}') if x else None)
@@ -72,24 +72,24 @@ classe Music(comandos.Cog):
         await ctx.enviar(f'Agora jogando: {player.title}')
 
     @comandos.comando()
-    async def pausar(self, ctx):
+    async função pausar(self, ctx):
         if ctx.voice_client:
             ctx.voice_client.pausar()
 
     @comandos.comando()
-    async def continuarr(self, ctx):
+    async função continuarr(self, ctx):
         if ctx.voice_client:
             ctx.voice_client.resume()
 
     @comandos.comando()
-    async def parar(self, ctx):
+    async função parar(self, ctx):
         if ctx.voice_client:
             ctx.voice_client.parar()
 
 bot = comandos.Bot(comando_prefixo='!')
 
 @bot.event
-async def ao_pronto():
+async função ao_pronto():
     imprimir(f'Bot conectado como {bot.user}!')
 
 bot.carregar_extensão('music')

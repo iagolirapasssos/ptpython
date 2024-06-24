@@ -8,21 +8,21 @@ importar discord.ext.comandos como comandos
 dotenv.carregar_dotenv()
 
 classe MeuBot(comandos.Bot):
-    def __init__(self):
+    função __init__(self):
         super().__init__(intents=discord.Intents.padrão())
         self.sincronizar_comandos()
 
-    async def ao_pronto(self):
+    async função ao_pronto(self):
         imprimir(f'Bot conectado como {self.user}!')
 
     @discord.app_commands.comando(nome='ping')
-    async def ping(self, interacao: discord.Integration):
+    async função ping(self, interacao: discord.Integration):
         await interacao.enviar('Pong!')
 
 bot = MeuBot(comando_prefixo='!')
 
 @bot.event
-async def ao_pronto():
+async função ao_pronto():
     imprimir(f'Bot conectado como {bot.user}!')
 
 bot.iniciar(os.getenv('DISCORD_TOKEN'))

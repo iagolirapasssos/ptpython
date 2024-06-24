@@ -1,9 +1,9 @@
 classe Pessoa:
-    def __init__(self, nome, idade):
+    função __init__(self, nome, idade):
         self.nome = nome
         self.idade = idade
     
-    def cumprimentar(self):
+    função cumprimentar(self):
         imprimir(f"Olá, meu nome é {self.nome} e eu tenho {self.idade} anos.")
 
 pessoa = Pessoa("João", 30)

@@ -2,25 +2,25 @@
 
 # Definição de uma classe base
 classe Animal:
-    def __init__(self, nome):
+    função __init__(self, nome):
         self.nome = nome
     
-    def falar(self):
+    função falar(self):
         imprimir(f"{self.nome} está fazendo um som.")
 
 # Definição de uma classe derivada (herança simples)
 classe Cachorro(Animal):
-    def falar(self):
+    função falar(self):
         imprimir(f"{self.nome} está latindo.")
 
 # Definição de uma classe base adicional para múltipla herança
 classe Mascote:
-    def brincar(self):
+    função brincar(self):
         imprimir(f"{self.nome} está brincando.")
 
 # Definição de uma classe derivada com múltipla herança
 classe CachorroMascote(Cachorro, Mascote):
-    def falar(self):
+    função falar(self):
         imprimir(f"{self.nome} está latindo feliz.")
 
 # Instanciando e usando as classes

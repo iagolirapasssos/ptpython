@@ -11,11 +11,11 @@ função somar(a, b):
 
 # Classe para representar uma Pessoa
 classe Pessoa:
-    def __init__(self, nome, idade):
+    função __init__(self, nome, idade):
         self.nome = nome
         self.idade = idade
     
-    def apresentar(self):
+    função apresentar(self):
         imprimir(f"Meu nome é {self.nome} e eu tenho {self.idade} anos.")
 
 # Uso de manipulação de strings
