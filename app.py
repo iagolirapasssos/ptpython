@@ -42,8 +42,6 @@ def run_code():
     data = request.json
     code = data.get('code', '')
     user_inputs = data.get('inputs', {})
-    #out_sem_newline = {key.strip(): value.strip() for key, value in user_inputs.items()} if len(user_inputs) > 0 else user_inputs
-    #user_inputs = out_sem_newline
 
     translated_code = translate(code)
     
@@ -79,8 +77,8 @@ def inputs_only(user_inputs):
     out = ''
     cont = 0
     for a in user_inputs.values():
-        out+=a+'\n'
-        cont+=1
+        out += a + '\n'
+        cont += 1
     return out, cont
 
 def extract_input_prompts(code):
@@ -103,7 +101,6 @@ def execute_code(temp_filename, user_inputs):
 
     out = ''
     ins = []
-    outs = []
     def get_input(prompt):
         in_ = user_inputs.get(prompt, '') + '\n'
         ins.append(in_)
@@ -111,19 +108,15 @@ def execute_code(temp_filename, user_inputs):
 
     print('\n\n\n')
     for prompt in extract_input_prompts(open(temp_filename).read()):
-        outs.append(prompt)
         print(f'prompt: {prompt} :::: get_input(prompt): {get_input(prompt)}')
-
 
     inputs = [get_input(prompt) for prompt in extract_input_prompts(open(temp_filename).read())]
     print(f'inputs: {inputs}')
     input_data = ''.join(inputs)
     print(f'input_data: {input_data}')
     print('\n\n\n')
-    
-    output, error = process.communicate(input=input_data)
 
-    for n, m in enumerate(ins):
+    output, error = process.communicate(input=input_data)
 
     print(f"\n\noutput: {output}, error: {error}, {output + error}\n\n")
     return output, error
