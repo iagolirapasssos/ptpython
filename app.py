@@ -58,8 +58,19 @@ def run_code():
 
     output = execute_code(temp_filename, user_inputs)
     os.remove(temp_filename)
+
+    out = inputs_only(user_inputs) if len(user_inputs) > 0 else output
     print({'output': output, 'prompts': input_prompts})
     return jsonify({'output': output, 'prompts': input_prompts})
+
+def inputs_only(user_inputs):
+    out = ''
+    for n, a in enumerate(user_inputs.values()):
+     if n+1 < len(l):
+             out+=a+'\n'
+     else:
+             out+=a
+    return
 
 def extract_input_prompts(code):
     import re
