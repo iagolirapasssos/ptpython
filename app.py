@@ -42,7 +42,7 @@ def run_code():
     data = request.json
     code = data.get('code', '')
     user_inputs = data.get('inputs', {})
-    print(user_inputs)
+    print(f'user_inputs: {user_inputs}')
 
     translated_code = translate(code)
     
@@ -59,13 +59,13 @@ def run_code():
     output = execute_code(temp_filename, user_inputs)
     os.remove(temp_filename)
 
-    print(f'output: {output} e type: {type(output)}')
+    print(f\n'output: {output} e type: {type(output)}\n')
     if len(user_inputs) > 0:
         out, cont = inputs_only(user_inputs)
         print(out, type(out))
         print(f'output: {output}')
         out_split = output.split('\n')
-        print(f'out_split: {out_split}')
+        print(f'\nout_split: {out_split}\n')
         if len(out_split) > cont:
             for num, n in enumerate(out_split):
                 if (num+1) > cont:
