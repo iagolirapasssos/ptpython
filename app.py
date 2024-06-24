@@ -68,10 +68,10 @@ def run_code():
         print(f'\nout_split: {out_split}\n')
         if len(out_split) > cont:
             for num, n in enumerate(out_split):
-                if (num+1) > cont:
+                if (num + 1) > cont:
                     out += n + '\n'
         else:
-            out += out_split[len(out_split)-1]
+            out += out_split[len(out_split) - 1]
     else:
         out = output
     print(f'out: {out}')
@@ -82,8 +82,8 @@ def inputs_only(user_inputs):
     out = ''
     cont = 0
     for a in user_inputs.values():
-        out+=a+'\n'
-        cont+=1
+        out += a + '\n'
+        cont += 1
     return out, cont
 
 def extract_input_prompts(code):
