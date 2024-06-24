@@ -58,11 +58,10 @@ def run_code():
     output, error = execute_code(temp_filename, user_inputs)
     os.remove(temp_filename)
 
-    # Concatena as respostas do usuário e as mensagens de erro, se houver
     result_output = output.strip() + '\n' + error.strip()
     
     print({'output': result_output, 'prompts': input_prompts})
-    return jsonify({'output': result_output.strip(), 'prompts': input_prompts})
+    return jsonify({'output': result_output, 'prompts': input_prompts})
 
 def inputs_only(user_inputs):
     out = ''
@@ -74,7 +73,7 @@ def inputs_only(user_inputs):
 
 def extract_input_prompts(code):
     import re
-    pattern = r'input\("([^"]+)"\)'
+    pattern = r'entrada\("([^"]+)"\)'
     return re.findall(pattern, code)
 
 def contains_dangerous_commands(code):
@@ -90,26 +89,25 @@ def execute_code(temp_filename, user_inputs):
         text=True
     )
 
-    out = ''
-    ins = []
     def get_input(prompt):
-        in_ = user_inputs.get(prompt, '') + '\n'
-        ins.append(in_)
-        return in_
+        return user_inputs.get(prompt, '') + '\n'
 
+    # Coleta os prompts de entrada do código
     input_prompts = extract_input_prompts(open(temp_filename).read())
-
-    inputs = [get_input(prompt) for prompt in input_prompts]
-    input_data = ''.join(inputs)
+    input_data = ''.join([get_input(prompt) for prompt in input_prompts])
 
     output, error = process.communicate(input=input_data)
 
-    # Remove os prompts do output, mantendo apenas as respostas do usuário e as mensagens de erro
-    clean_output = output
-    for prompt in input_prompts:
-        clean_output = clean_output.replace(prompt, '')
+    # Remove os prompts de entrada da saída
+    filtered_output = filter_output(output, input_prompts)
 
-    return clean_output, error
+    print(f"\n\noutput: {filtered_output}, error: {error}, {filtered_output + error}\n\n")
+    return filtered_output, error
+
+def filter_output(output, prompts):
+    for prompt in prompts:
+        output = output.replace(prompt, '')
+    return output
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=6000)
