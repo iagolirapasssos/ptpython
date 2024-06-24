@@ -59,7 +59,7 @@ def run_code():
     output = execute_code(temp_filename, user_inputs)
     os.remove(temp_filename)
 
-    out = inputs_only(user_inputs) if len(user_inputs) > 0 else output
+    out = output #inputs_only(user_inputs) if len(user_inputs) > 0 else output
     print(f'out: {out}')
     print({'output': out, 'prompts': input_prompts})
     return jsonify({'output': out, 'prompts': input_prompts})
