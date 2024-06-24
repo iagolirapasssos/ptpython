@@ -159,12 +159,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     }
 
-    function acessarValor(objeto) {
-      for (let chave in objeto) {
-        return objeto[chave];
-      }
-    }
-
     function handlePrompts(prompts, code) {
         const inputs = {};
         let promises = prompts.map(prompt => {
