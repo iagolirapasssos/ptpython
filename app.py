@@ -68,7 +68,7 @@ def run_code():
         if len(out_split) > cont:
             for num, n in enumerate(out_split):
                 if (num+1) > cont:
-                    out += n
+                    out += n + '\n'
         else:
             print(l)
             out += out_split[len(out_split)-1]
