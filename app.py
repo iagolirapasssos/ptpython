@@ -44,7 +44,6 @@ def run_code():
     user_inputs = data.get('inputs', {})
     #out_sem_newline = {key.strip(): value.strip() for key, value in user_inputs.items()} if len(user_inputs) > 0 else user_inputs
     #user_inputs = out_sem_newline
-    print(f'user_inputs: {user_inputs}')
 
     translated_code = translate(code)
     
@@ -58,16 +57,12 @@ def run_code():
         temp_file.flush()
         temp_filename = temp_file.name
 
-    output = execute_code(temp_filename, user_inputs)
+    output, error = execute_code(temp_filename, user_inputs)
     os.remove(temp_filename)
 
-    print(f'\noutput: {output} e type: {type(output)}\n')
     if len(user_inputs) > 0:
         out, cont = inputs_only(user_inputs)
-        print(out, type(out))
-        print(f'output: {output}')
         out_split = output.split('\n')
-        print(f'\nout_split: {out_split}\n')
         if len(out_split) > cont:
             for num, n in enumerate(out_split):
                 if (num+1) > cont:
@@ -76,7 +71,7 @@ def run_code():
             out += out_split[len(out_split)-1]
     else:
         out = output
-    print(f'out: {out}')
+    
     print({'output': out, 'prompts': input_prompts})
     return jsonify({'output': out, 'prompts': input_prompts})
 
@@ -107,16 +102,18 @@ def execute_code(temp_filename, user_inputs):
     )
 
     out = ''
+    ins = []
+    outs = []
     def get_input(prompt):
-        nonlocal out
         in_ = user_inputs.get(prompt, '') + '\n'
-        out += in_
+        ins.append(in_)
         return in_
 
     print('\n\n\n')
     for prompt in extract_input_prompts(open(temp_filename).read()):
-        out += prompt
+        outs.append(prompt)
         print(f'prompt: {prompt} :::: get_input(prompt): {get_input(prompt)}')
+
     inputs = [get_input(prompt) for prompt in extract_input_prompts(open(temp_filename).read())]
     print(f'inputs: {inputs}')
     input_data = ''.join(inputs)
@@ -127,7 +124,7 @@ def execute_code(temp_filename, user_inputs):
     
     output, error = process.communicate(input=input_data)
     print(f"output: {output}, error: {error}, {output + error}")
-    return (out + error).strip()
+    return out, error
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=6000)
