@@ -42,8 +42,6 @@ def run_code():
     data = request.json
     code = data.get('code', '')
     user_inputs = data.get('inputs', {})
-    out_sem_newline = {key.strip(): value.strip() for key, value in user_inputs.items()} #remover o \n dos valores
-    user_inputs = out_sem_newline
     print(f'user_inputs: {user_inputs}')
 
     translated_code = translate(code)
@@ -70,10 +68,10 @@ def run_code():
         print(f'\nout_split: {out_split}\n')
         if len(out_split) > cont:
             for num, n in enumerate(out_split):
-                if (num + 1) > cont:
+                if (num+1) > cont:
                     out += n + '\n'
         else:
-            out += out_split[len(out_split) - 1]
+            out += out_split[len(out_split)-1]
     else:
         out = output
     print(f'out: {out}')
@@ -84,8 +82,8 @@ def inputs_only(user_inputs):
     out = ''
     cont = 0
     for a in user_inputs.values():
-        out += a + '\n'
-        cont += 1
+        out+=a+'\n'
+        cont+=1
     return out, cont
 
 def extract_input_prompts(code):
@@ -107,7 +105,7 @@ def execute_code(temp_filename, user_inputs):
     )
 
     def get_input(prompt):
-        return user_inputs.get(prompt, '')
+        return user_inputs.get(prompt, '') + '\n'
 
     inputs = [get_input(prompt) for prompt in extract_input_prompts(open(temp_filename).read())]
     input_data = ''.join(inputs)
