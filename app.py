@@ -62,7 +62,7 @@ def run_code():
     result_output = output.strip() + '\n' + error.strip()
     
     print({'output': result_output, 'prompts': input_prompts})
-    return jsonify({'output': result_output, 'prompts': input_prompts})
+    return jsonify({'output': result_output.strip(), 'prompts': input_prompts})
 
 def inputs_only(user_inputs):
     out = ''
@@ -97,20 +97,19 @@ def execute_code(temp_filename, user_inputs):
         ins.append(in_)
         return in_
 
-    print('\n\n\n')
-    for prompt in extract_input_prompts(open(temp_filename).read()):
-        print(f'prompt: {prompt} :::: get_input(prompt): {get_input(prompt)}')
+    input_prompts = extract_input_prompts(open(temp_filename).read())
 
-    inputs = [get_input(prompt) for prompt in extract_input_prompts(open(temp_filename).read())]
-    print(f'inputs: {inputs}')
+    inputs = [get_input(prompt) for prompt in input_prompts]
     input_data = ''.join(inputs)
-    print(f'input_data: {input_data}')
-    print('\n\n\n')
 
     output, error = process.communicate(input=input_data)
 
-    print(f"\n\noutput: {output}, error: {error}, {output + error}\n\n")
-    return output, error
+    # Remove os prompts do output, mantendo apenas as respostas do usuário e as mensagens de erro
+    clean_output = output
+    for prompt in input_prompts:
+        clean_output = clean_output.replace(prompt, '')
+
+    return clean_output, error
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=6000)
