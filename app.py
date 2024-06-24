@@ -107,7 +107,7 @@ def execute_code(temp_filename, user_inputs):
     )
 
     def get_input(prompt):
-        return user_inputs.get(prompt, '') + '\n'
+        return user_inputs.get(prompt, '')
 
     inputs = [get_input(prompt) for prompt in extract_input_prompts(open(temp_filename).read())]
     input_data = ''.join(inputs)
