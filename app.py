@@ -108,6 +108,7 @@ def execute_code(temp_filename, user_inputs):
 
     out = ''
     def get_input(prompt):
+        nonlocal out
         in_ = user_inputs.get(prompt, '') + '\n'
         out += in_
         return in_
