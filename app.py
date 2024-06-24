@@ -42,6 +42,7 @@ def run_code():
     data = request.json
     code = data.get('code', '')
     user_inputs = data.get('inputs', {})
+    print(user_inputs)
 
     translated_code = translate(code)
     
@@ -58,13 +59,17 @@ def run_code():
     output = execute_code(temp_filename, user_inputs)
     os.remove(temp_filename)
 
+    print(f'output: {output} e type: {type(output)}')
     if len(user_inputs) > 0:
         out = inputs_only(user_inputs)
-        output_splited = output.split('\n')
-        out += output_splited[len(output_splited)-1]
+        print(out, type(out))
+        l = output.split('\n')
+        print(l)
+        out += l[len(l)-1]
     else:
         out = output
-
+    print(f'out: {out}')
+    print({'output': out, 'prompts': input_prompts})
     return jsonify({'output': out, 'prompts': input_prompts})
 
 def inputs_only(user_inputs):
