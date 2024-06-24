@@ -63,14 +63,14 @@ def run_code():
     if len(user_inputs) > 0:
         out, cont = inputs_only(user_inputs)
         print(out, type(out))
+        print(f'out_split: {out_split}')
         out_split = output.split('\n')
-
+        print(f'out_split: {out_split}')
         if len(out_split) > cont:
             for num, n in enumerate(out_split):
                 if (num+1) > cont:
                     out += n + '\n'
         else:
-            print(l)
             out += out_split[len(out_split)-1]
     else:
         out = output
